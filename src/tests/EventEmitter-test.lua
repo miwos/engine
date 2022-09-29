@@ -1,0 +1,42 @@
+local EventEmitter = require('EventEmitter')
+
+local function reset()
+  EventEmitter.__events = {}
+end
+
+describe('EventEmitter', function()
+  it('subscribes to an event', function()
+    reset()
+    local handler = Testing.fn()
+    EventEmitter:on('my-event', handler)
+    EventEmitter:emit('my-event')
+    expect(handler):toBeCalledTimes(1)
+  end)
+
+  it('subscribes to an event once', function()
+    reset()
+    local handler = Testing.fn()
+    EventEmitter:once('my-event', handler)
+    EventEmitter:emit('my-event')
+    EventEmitter:emit('my-event')
+    expect(handler):toBeCalledTimes(1)
+  end)
+
+  it('unsubscribes from an event', function()
+    reset()
+    local handler = Testing.fn()
+    EventEmitter:on('my-event', handler)
+    EventEmitter:emit('my-event')
+    EventEmitter:off('my-event', handler)
+    EventEmitter:emit('my-event')
+    expect(handler):toBeCalledTimes(1)
+  end)
+
+  it('emits an event with payload', function()
+    reset()
+    local handler = Testing.fn()
+    EventEmitter:on('my-event', handler)
+    EventEmitter:emit('my-event', 123, 'payload')
+    expect(handler):toBeCalledWith(123, 'payload')
+  end)
+end)

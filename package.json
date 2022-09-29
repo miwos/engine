@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/sync.js"
+  },
+  "devDependencies": {
+    "@miwos/bridge": "^0.1.2",
+    "@miwos/highlight-lua-dump": "link:..\\highlight-lua-dump",
+    "chokidar": "^3.5.3",
+    "colorize-template": "^1.0.0",
+    "lua-json": "^1.0.1",
+    "picocolors": "^1.0.0"
+  }
+}
