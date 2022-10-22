@@ -1,20 +1,14 @@
 local class = require('class')
-local mixin = require('mixin')
 local EventEmitter = require('EventEmitter')
 local utils = require('utils')
 
-local Module = class()
-
--- Mixin the event emitter both with and without `__` prefix. This will ensure
--- that the user doesn't accidentally override the event emitter methods, but
--- still be able to use `Module:on()` instead of `Module.__on()`.
-mixin(Module, EventEmitter, '__')
-mixin(Module, EventEmitter)
+---@class Module : Class, EventEmitter
+---@field init function | nil
+local Module = class(EventEmitter)
 
 function Module:constructor()
   self.__inputs = {}
   self.__outputs = {}
-  self.__events = {}
 
   utils.callIfExists(self.init, self)
 end

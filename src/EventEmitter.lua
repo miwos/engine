@@ -1,3 +1,4 @@
+---@class EventEmitter : Class
 local EventEmitter = { __events = {} }
 
 function EventEmitter:on(event, callback)

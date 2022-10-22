@@ -5,7 +5,7 @@
 ---A very basic class helper with inheritance.
 ---@param base? table
 ---@return table
-function class(base)
+local function class(base)
   local c = {}
   c.__index = c
   c.Class = c
