@@ -6,15 +6,24 @@ import chokidar from "chokidar";
 import pico from "picocolors";
 import fs from "fs/promises";
 import { createColorize } from "colorize-template";
-import { highlightLuaDump } from "@miwos/highlight-lua-dump";
+import { highlightLuaDump, highlightLuaStack } from "@miwos/highlight-lua-dump";
 import { parse } from "lua-json";
 
-const colorize = createColorize({
+const colors = {
   ...pico,
   success: pico.green,
-  error: pico.red,
+  info: pico.gray,
   warn: pico.yellow,
-});
+  error: pico.red,
+  specialKey: pico.cyan,
+  key: pico.green,
+  complexType: pico.magenta,
+  number: pico.red,
+  boolean: pico.blue,
+  string: pico.yellow,
+};
+
+const colorize = createColorize(colors);
 
 const pathToPosix = (path) => path.replace(/\\/g, "/");
 
@@ -22,35 +31,24 @@ const restoreCurlyBraces = (text) =>
   text.replaceAll("#<#", "{").replaceAll("#>#", "}");
 
 const bridge = new Bridge(new NodeSerialTransport(), { debug: false });
-await bridge.open({ path: "COM8" });
+await bridge.open({ path: "COM5" });
 bridge.on("/log/:type", ({ args: [text] }, { type }) => {
-  const colors = {
-    error: pico.red,
-    warn: pico.yellow,
-    info: pico.gray,
-    specialKey: pico.cyan,
-    key: pico.green,
-    complexType: pico.magenta,
-    number: pico.blue,
-    boolean: pico.blue,
-    string: pico.yellow,
-  };
-
   if (type === "dump") {
     console.log(
       highlightLuaDump(parse(`return ${text}`), (value, type) =>
         colors[type]?.(value)
       )
     );
+  } else if (type === "stack") {
+    const stack = parse(`return ${text}`);
+    console.log(
+      highlightLuaStack(stack, (value, type) => colors[type]?.(value))
+    );
   } else {
     const color = colors[type] ?? pico.white;
     (console[type] ?? console.log)(restoreCurlyBraces(color(text)));
   }
 });
-
-bridge.on("/data/unknown", (data) =>
-  console.log(restoreCurlyBraces(colorize`${new TextDecoder().decode(data)}`))
-);
 
 const replaceRootDir = (path, newRoot) => {
   const parts = path.split("/");
