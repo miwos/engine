@@ -13,16 +13,31 @@ function Module:constructor()
   utils.callIfExists(self.init, self)
 end
 
-function Module:__connect(outputId, moduleId, inputId)
-  self.__outputs[outputId] = self.__outputs[outputId] or {}
-  table.insert(self.__outputs[outputId], { moduleId, inputId })
+---@param outputIndex number
+---@param moduleId number
+---@param inputIndex number
+function Module:__connect(outputIndex, moduleId, inputIndex)
+  self.__outputs[outputIndex] = self.__outputs[outputIndex] or {}
+  table.insert(self.__outputs[outputIndex], { moduleId, inputIndex })
 end
 
+---@param outputIndex number
+---@param moduleId number
+---@param inputIndex number
+function Module:__disconnect(outputIndex, moduleId, inputIndex)
+  for index, connection in pairs(self.__outputs[outputIndex] or {}) do
+    if connection[0] == moduleId and connection[1] == inputIndex then
+      connection[index] = nil
+      return
+    end
+  end
+end
+
+---@param outputId number
+---@param message any
 function Module:output(outputId, message)
   local outputs = self.__outputs[outputId]
-  if not outputs then
-    return
-  end
+  if not outputs then return end
 end
 
 return Module

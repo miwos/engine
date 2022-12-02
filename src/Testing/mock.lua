@@ -1,5 +1,3 @@
-local utils = require('utils')
-
 local mockFunctionMeta = {
   __call = function(self, ...)
     self.calls = self.calls + 1
@@ -7,16 +5,19 @@ local mockFunctionMeta = {
   end,
 }
 
-local function serialize(self)
+local function serialize()
   return 'fn()'
 end
 
 local function createMockFunction()
-  return setmetatable({
+  local mock = setmetatable({
     calls = 0,
     args = {},
     serialize = serialize,
   }, mockFunctionMeta)
+
+  ---@cast mock -table, +function
+  return mock
 end
 
 return createMockFunction

@@ -63,9 +63,8 @@ local function fail(assertion, text, received, ...)
   local receivedSerialized = Testing.serialize(received)
   -- There can be multiple expected values, for example when using
   -- `toBeCalledWith(1, 2, 3)`.
-  local expectedSerialized = utils.maskCurlyBraces(
-    utils.serialize({ ... }, true):sub(3, -3)
-  )
+  local expectedSerialized =
+    utils.maskCurlyBraces(utils.serialize({ ... }, true):sub(3, -3))
 
   if text then
     printFailCompact(assertion, receivedSerialized, expectedSerialized)

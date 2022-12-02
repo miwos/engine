@@ -20,14 +20,10 @@ end
 local function toBeCalledWith(mockFn, ...)
   local args = { ... }
 
-  if #mockFn.args ~= #args then
-    return false
-  end
+  if #mockFn.args ~= #args then return false end
 
   for i = 1, #args do
-    if args[i] ~= mockFn.args[i] then
-      return false
-    end
+    if args[i] ~= mockFn.args[i] then return false end
   end
 
   return true

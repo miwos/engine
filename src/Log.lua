@@ -2,6 +2,7 @@ local utils = require('utils')
 
 Log = _G.Log or {}
 
+---@enum LogType
 local LogType = {
   Info = 1,
   Warn = 2,
@@ -9,6 +10,7 @@ local LogType = {
   Dump = 4,
 }
 
+---@param type LogType
 function Log.log(type, ...)
   local args = { ... }
   local message = ''
@@ -43,10 +45,13 @@ function Log.dump(...)
 end
 
 local timers = {}
+
+---@param label string
 function Log.time(label)
   timers[label] = Timer.now()
 end
 
+---@param label string
 function Log.timeEnd(label)
   Log.info(label .. ': ' .. Timer.now() - timers[label] .. 'μs')
   timers[label] = nil
