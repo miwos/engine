@@ -12,7 +12,7 @@ mixin(Midi, EventEmitter)
 local messageDict = {}
 
 local function defineMidiMessage(type, name, keys)
-  local Message = class(MidiMessage)
+  local Message = class(MidiMessage) --[[@as MidiMessage]]
   Message.type = type
   Message.keys = keys
   Message.name = name

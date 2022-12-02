@@ -18,7 +18,7 @@ end
 
 ---@type fun(name: string): Module
 function Miwos.defineModule(name)
-  local module = class(Module)
+  local module = class(Module) --[[@as Module]]
   module.__type = name
   module.__events = {}
   Miwos.moduleDefinitions[name] = Module
