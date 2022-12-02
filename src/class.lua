@@ -15,9 +15,7 @@ local function class(base)
   ---@return Class
   local function call(_, ...)
     local instance = setmetatable({}, c)
-    if c.constructor then
-      c.constructor(instance, ...)
-    end
+    if c.constructor then c.constructor(instance, ...) end
     return instance
   end
 

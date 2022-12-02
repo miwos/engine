@@ -54,9 +54,7 @@ local function serializeTable(t, done, pretty)
       )
 
     key, value = next(t, key)
-    if key then
-      str = str .. (pretty and ', ' or ',')
-    end
+    if key then str = str .. (pretty and ', ' or ',') end
   end
   return str .. (pretty and ' }' or '}')
 end
@@ -84,9 +82,7 @@ end
 ---@param fn fun(...)
 ---@param ... any
 function utils.callIfExists(fn, ...)
-  if fn then
-    fn(...)
-  end
+  if fn then fn(...) end
 end
 
 return utils
