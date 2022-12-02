@@ -16,9 +16,7 @@ function Miwos.createPatch()
   return Patch
 end
 
----Create and register a new module type.
----@param name string
----@return Module
+---@type fun(name: string): Module
 function Miwos.defineModule(name)
   local module = class(Module)
   module.__type = name

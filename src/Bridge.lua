@@ -4,8 +4,7 @@ Bridge = _G.Bridge or {}
 Bridge.__methods = {}
 Bridge.__events = {}
 
----@param address string
----@return unknown
+---@type fun(address: string, ...: any): unknown
 function Bridge.handleOsc(address, ...)
   -- First call the method, then emit events.
   local method = Bridge.__methods[address]
@@ -15,8 +14,7 @@ function Bridge.handleOsc(address, ...)
   return result
 end
 
----@param name string
----@param handler function
+---@type fun(name: string, handler: function)
 function Bridge.addMethod(name, handler)
   if Bridge.__methods[name] then
     Log.warn(string.format('Bridge method `%s` already exists', name))
@@ -25,20 +23,17 @@ function Bridge.addMethod(name, handler)
   Bridge.__methods[name] = handler
 end
 
----@param name string
----@param handler function
+---@type fun(name: string, handler: function)
 function Bridge.on(name, handler)
   EventEmitter.on(Bridge, name, handler)
 end
 
----@param name string
----@param handler function
+---@type fun(name: string, handler: function)
 function Bridge.off(name, handler)
   EventEmitter.off(Bridge, name, handler)
 end
 
----@param name string
----@param handler function
+---@type fun(name: string, handler: function)
 function Bridge.once(name, handler)
   EventEmitter.once(Bridge, name, handler)
 end

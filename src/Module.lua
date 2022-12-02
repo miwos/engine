@@ -13,17 +13,13 @@ function Module:constructor()
   utils.callIfExists(self.init, self)
 end
 
----@param outputIndex number
----@param moduleId number
----@param inputIndex number
+---@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
 function Module:__connect(outputIndex, moduleId, inputIndex)
   self.__outputs[outputIndex] = self.__outputs[outputIndex] or {}
   table.insert(self.__outputs[outputIndex], { moduleId, inputIndex })
 end
 
----@param outputIndex number
----@param moduleId number
----@param inputIndex number
+---@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
 function Module:__disconnect(outputIndex, moduleId, inputIndex)
   for index, connection in pairs(self.__outputs[outputIndex] or {}) do
     if connection[0] == moduleId and connection[1] == inputIndex then
@@ -33,10 +29,9 @@ function Module:__disconnect(outputIndex, moduleId, inputIndex)
   end
 end
 
----@param outputId number
----@param message any
-function Module:output(outputId, message)
-  local outputs = self.__outputs[outputId]
+---@type fun(self, outputIndex: number, message: MidiMessage)
+function Module:output(outputIndex, message)
+  local outputs = self.__outputs[outputIndex]
   if not outputs then return end
 end
 

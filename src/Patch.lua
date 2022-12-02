@@ -9,8 +9,7 @@ function Patch:constructor()
   self.connections = {}
 end
 
----@param moduleType string
----@param moduleId number
+---@type fun(self, moduleType: string, moduleId: number): boolean
 function Patch:addModule(moduleType, moduleId)
   local Module = Miwos.moduleDefinitions[moduleType]
   if not Module then
@@ -19,7 +18,7 @@ function Patch:addModule(moduleType, moduleId)
 
   if self.modules[moduleId] then
     Log.warn(string.format('module with id `%s` already exists', moduleId))
-    return
+    return false
   end
 
   local module = Module()
@@ -30,7 +29,7 @@ function Patch:addModule(moduleType, moduleId)
   return true
 end
 
----@param moduleId number
+---@type fun(self, moduleId: number)
 function Patch:removeModule(moduleId)
   self.modules[moduleId] = nil
 end

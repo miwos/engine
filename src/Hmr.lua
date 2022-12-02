@@ -1,8 +1,6 @@
 Hmr = _G.Hmr or {}
 
----Try to hot-replace a module.
----@param modulePath string
----@return boolean - Wether or not the module could be hot-replaced.
+---@type fun(modulePath: string): boolean
 function Hmr.update(modulePath)
   -- Get the module name and omit die lua root folder.
   local moduleName = string.sub(string.gsub(modulePath, '%/', '.'), 5, -5)

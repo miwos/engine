@@ -79,8 +79,7 @@ function utils.pluralize(count, noun, suffix)
   return noun .. (count > 1 and suffix or '')
 end
 
----@param fn fun(...)
----@param ... any
+---@type fun(fn: function, ...: any)
 function utils.callIfExists(fn, ...)
   if fn then fn(...) end
 end

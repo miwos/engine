@@ -1,17 +1,14 @@
 ---@class EventEmitter : Class
 local EventEmitter = { __events = {} }
 
----@param event string
----@param callback function
----@return function callback
+---@type fun(self, event: string, callback: function): function
 function EventEmitter:on(event, callback)
   self.__events[event] = self.__events[event] or {}
   table.insert(self.__events[event], callback)
   return callback
 end
 
----@param event string
----@param callback function
+---@type fun(self, event: string, callback: function)
 function EventEmitter:off(event, callback)
   local handlers = self.__events[event]
 
@@ -22,8 +19,7 @@ function EventEmitter:off(event, callback)
   if #handlers == 0 then handlers[event] = nil end
 end
 
----@param event string
----@param callback function
+---@type fun(self, event: string, callback: function)
 function EventEmitter:once(event, callback)
   local function handler()
     self:off(event, handler)
@@ -32,7 +28,7 @@ function EventEmitter:once(event, callback)
   self:on(event, handler)
 end
 
----@param event string
+---@type fun(self, event: string, ...: unknown)
 function EventEmitter:emit(event, ...)
   local handlers = self.__events[event]
   if handlers ~= nil then

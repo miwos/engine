@@ -2,17 +2,15 @@
 ---@field Class table
 ---@field super table
 
----A very basic class helper with inheritance.
----@param base? table
----@return table
+--A very basic class helper with inheritance.
+
+---@type fun(base?: table): Class
 local function class(base)
   local c = {}
   c.__index = c
   c.Class = c
 
-  --Create a new instance.
-  ---@param _ table
-  ---@return Class
+  ---@type fun(_: table, ...: unknown): Class
   local function call(_, ...)
     local instance = setmetatable({}, c)
     if c.constructor then c.constructor(instance, ...) end

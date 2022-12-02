@@ -36,13 +36,7 @@ Midi.NoteOff = defineMidiMessage(0x80, 'noteOff', { 'note', 'velocity' })
 Midi.ControlChange =
   defineMidiMessage(0xB0, 'controlChange', { 'controler', 'value' })
 
----Handle incoming midi data from c++
----@param index number
----@param type number
----@param data1 number
----@param data2 number
----@param channel number
----@param cable number
+---@type fun(index: number, type: number, data1: number, data2: number, channel: number, cable: number)
 function Midi.handleInput(index, type, data1, data2, channel, cable)
   local Message = messageDict[type]
   if Message == nil then return end
