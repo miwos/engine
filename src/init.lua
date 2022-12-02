@@ -4,6 +4,7 @@ require('Hmr')
 require('Testing')
 require('Bridge')
 require('Miwos')
+require('Midi')
 
 Miwos.createPatch()
 Miwos.defineModule('Input')
