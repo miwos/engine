@@ -6,7 +6,7 @@ local Patch = require('Patch')
 ---@field patch Patch | nil
 Miwos = _G.Miwos or {}
 
-Miwos.modules = {}
+Miwos.moduleDefinitions = {}
 
 function Miwos.loadPatch() end
 
@@ -16,13 +16,13 @@ function Miwos.createPatch()
   return Patch
 end
 
----Create and register a new module.
+---Create and register a new module type.
 ---@param name string
 ---@return Module
-function Miwos.createModule(name)
+function Miwos.defineModule(name)
   local module = class(Module)
   module.__type = name
   module.__events = {}
-  Miwos.modules[name] = Module
+  Miwos.moduleDefinitions[name] = Module
   return module
 end
