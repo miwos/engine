@@ -31,7 +31,12 @@ const restoreCurlyBraces = (text) =>
   text.replaceAll("#<#", "{").replaceAll("#>#", "}");
 
 const bridge = new Bridge(new NodeSerialTransport(), { debug: false });
-await bridge.open({ path: "COM5" });
+await bridge.open({ path: "COM8" });
+
+bridge.on("/data/unknown", (data) =>
+  console.log(colorize`${new TextDecoder().decode(data)}`)
+);
+
 bridge.on("/log/:type", ({ args: [text] }, { type }) => {
   if (type === "dump") {
     console.log(
@@ -75,14 +80,14 @@ const syncFile = async (path, update = true) => {
 const watcher = chokidar.watch("src/**/*");
 watcher.on("change", syncFile);
 
-// const filesToSync = [];
-// const handleInitialAdd = (path) => filesToSync.push(path);
-// watcher.on("add", handleInitialAdd);
-// watcher.on("ready", async () => {
-//   watcher.off("add", handleInitialAdd);
-//   for (let path of filesToSync) {
-//     path = pathToPosix(path);
-//     const pathOnDevice = replaceRootDir(path, "lua");
-//     await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
-//   }
-// });
+const filesToSync = [];
+const handleInitialAdd = (path) => filesToSync.push(path);
+watcher.on("add", handleInitialAdd);
+watcher.on("ready", async () => {
+  watcher.off("add", handleInitialAdd);
+  for (let path of filesToSync) {
+    path = pathToPosix(path);
+    const pathOnDevice = replaceRootDir(path, "lua");
+    await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
+  }
+});
