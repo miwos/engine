@@ -1,6 +1,6 @@
 local class = require('class')
 
----@class Patch
+---@class Patch: Class
 ---@field modules table<string, Module>
 local Patch = class()
 

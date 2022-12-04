@@ -5,6 +5,7 @@ local mixin = require('mixin')
 
 ---@class Midi : EventEmitter
 ---@field private __send fun(index: number, type: number, data1: number, data2: number, channel: number, cable: number)
+---@field private __getNoteId fun(note: number, channel: number)
 Midi = _G.Midi or {}
 mixin(Midi, EventEmitter)
 
@@ -45,8 +46,13 @@ function Midi.handleInput(index, type, data1, data2, channel, cable)
   Midi:emit('input', index, message, cable)
 end
 
----@type fun(_, index: number, message: MidiMessage, cable: number)
+---@type fun(self, index: number, message: MidiMessage, cable: number)
 function Midi:send(index, message, cable)
   local data1, data2 = message:data()
   self.__send(index, message.type, data1, data2, message.channel, cable)
+end
+
+---@type fun(self, note: MidiNoteOn | MidiNoteOff)
+function Midi:getNoteId(note)
+  return Midi.__getNoteId(note.note, note.channel)
 end
