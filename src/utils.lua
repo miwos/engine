@@ -1,5 +1,9 @@
 local utils = {}
 
+function utils.option(value, default)
+  return value == nil and default or value
+end
+
 ---From https://stackoverflow.com/a/66370080/12207499, thanks PiFace!
 function utils.isArray(t)
   return type(t) == 'table' and #t > 0 and next(t, #t) == nil

@@ -16,11 +16,17 @@ function Miwos.createPatch()
   return Patch
 end
 
----@type fun(name: string): Module
-function Miwos.defineModule(name)
+---@alias Signal 'midi' | 'trigger'
+---@class ModuleOptions
+---@field inputs Signal[]
+---@field outputs Signal[]
+
+---@type fun(name: string, options: ModuleOptions): Module
+function Miwos.defineModule(name, options)
   local module = class(Module) --[[@as Module]]
   module.__type = name
   module.__events = {}
+  module.__options = options
   Miwos.moduleDefinitions[name] = Module
   return module
 end

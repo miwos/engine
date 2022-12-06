@@ -1,30 +1,22 @@
 ---@class ModuleInput : Module
-local Input = Miwos.defineModule('Input')
-
-function Input:init()
-  self.inputListener = function(...)
-    self:handleInput(...)
-  end
-
-  Midi.addInputListener(self.inputListener)
-end
-
-Input:defineInOut({ Output.Midi })
-
-Input:defineProps({
-  Prop.Number('device', { list = false, min = 2, max = 16, step = 1 }),
-  Prop.Number('cable', { list = false, min = 1, max = 16, step = 1 }),
+local Input = Miwos.defineModule('Input', {
+  outputs = { 'midi' },
 })
 
-function Input:handleInput(index, message, cable)
-  local isSameDevice = index == self.props.device
-  -- todo: fix, why is this commented out?
-  -- local isSameCable = cable == nil or cable == self.props.cable
-  if isSameDevice then self:output(1, message) end
+function Input:init()
+  self.midiInputEventHandler = Midi:on('input', function(...)
+    self:handleMidiInput(...)
+  end)
+end
+
+function Input:handleMidiInput(index, message, cable)
+  local isSameDevice = true
+  local isSameCable = true
+  if isSameDevice and isSameCable then self:output(1, message, cable) end
 end
 
 function Input:destroy()
-  Midi.removeInputListener(self.inputListener)
+  Midi:off('input', self.midiInputEventHandler)
 end
 
 return Input
