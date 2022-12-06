@@ -9,6 +9,9 @@ Display.Color = {
   White = 1,
 }
 
+Display.width = 128
+Display.height = 32
+
 ---@type fun(self, index: number)
 function Display:constructor(index)
   self.index = index

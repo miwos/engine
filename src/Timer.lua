@@ -30,3 +30,8 @@ function Timer.delay(callback, delay)
   events[callback] = Timer.now() + delay
   return callback
 end
+
+---@type fun(callback: function)
+function Timer.cancel(callback)
+  if callback then Timer.events[callback] = nil end
+end
