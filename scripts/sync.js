@@ -8,6 +8,13 @@ import fs from "fs/promises";
 import { createColorize } from "colorize-template";
 import { highlightLuaDump, highlightLuaStack } from "@miwos/highlight-lua-dump";
 import { parse } from "lua-json";
+import { SerialPort } from "serialport";
+
+const ports = await SerialPort.list();
+const port = ports.find(
+  (port) => port.vendorId === "16C0" && port.productId === "0489"
+);
+if (!port) throw new Error("Miwos not connected");
 
 const colors = {
   ...pico,
@@ -31,7 +38,7 @@ const restoreCurlyBraces = (text) =>
   text.replaceAll("#<#", "{").replaceAll("#>#", "}");
 
 const bridge = new Bridge(new NodeSerialTransport(), { debug: false });
-await bridge.open({ path: "COM8" });
+await bridge.open({ path: port.path });
 
 bridge.on("/data/unknown", (data) =>
   console.log(colorize`${new TextDecoder().decode(data)}`)

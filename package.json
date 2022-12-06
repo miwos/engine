@@ -10,5 +10,8 @@
     "colorize-template": "^1.0.0",
     "lua-json": "^1.0.1",
     "picocolors": "^1.0.0"
+  },
+  "dependencies": {
+    "serialport": "^10.5.0"
   }
 }
