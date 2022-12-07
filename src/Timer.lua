@@ -33,5 +33,5 @@ end
 
 ---@type fun(callback: function)
 function Timer.cancel(callback)
-  if callback then Timer.events[callback] = nil end
+  if callback then events[callback] = nil end
 end
