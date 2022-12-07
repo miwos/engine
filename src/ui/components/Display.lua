@@ -1,7 +1,9 @@
-local class = require('class')
+---@class DisplayProps
+---@field index ?number
 
----@class Display : Class
-Display = class()
+---@class Display : Component
+---@field props DisplayProps
+local Display = Miwos.defineComponent('Display')
 
 ---@enum Color
 Display.Color = {
@@ -12,9 +14,8 @@ Display.Color = {
 Display.width = 128
 Display.height = 32
 
----@type fun(self, index: number)
-function Display:constructor(index)
-  self.index = index
+function Display:setup()
+  self.index = self.props.index or self.ctx.slot
 end
 
 ---@type fun(self, text: string, color: Color)
@@ -29,7 +30,7 @@ end
 
 ---@type fun(self, x1: number, y1: number, x2: number, y2: number, color: Color)
 function Display:drawLine(x1, y1, x2, y2, color)
-  Displays.drawLine(self.index, x1, y2, x2, y2, color)
+  Displays.drawLine(self.index, x1, y1, x2, y2, color)
 end
 
 ---@type fun(self, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, color: Color, fill: boolean)
@@ -68,3 +69,5 @@ end
 function Display:update()
   Displays.update(self.index)
 end
+
+return Display

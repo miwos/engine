@@ -1,4 +1,4 @@
----@class EventEmitter : Class
+---@class EventEmitter
 local EventEmitter = { __events = {} }
 
 ---@type fun(self, event: string, callback: function): function
