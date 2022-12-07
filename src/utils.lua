@@ -85,7 +85,16 @@ end
 
 ---@type fun(fn: function, ...: any)
 function utils.callIfExists(fn, ...)
-  if fn then fn(...) end
+  if fn then return fn(...) end
+end
+
+function utils.mapValue(value, inMin, inMax, outMin, outMax)
+  return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
+end
+
+function utils.getUsedMemory()
+  collectgarbage('collect')
+  return collectgarbage('count')
 end
 
 return utils
