@@ -35,8 +35,8 @@ function NumberField:render()
   end
 
   return {
-    encoder = Encoder:define(),
-    progressBar = ProgressBar:define({
+    encoder = Encoder(),
+    progressBar = ProgressBar({
       x = 0,
       y = Display.height - 7,
       width = Display.width,
@@ -45,7 +45,7 @@ function NumberField:render()
       showScale = props.showScale,
       scaleStep = scaleStep,
     }),
-    labelValue = LabelValue:define({
+    labelValue = LabelValue({
       x = 0,
       y = 0,
       width = Display.width,

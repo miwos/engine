@@ -25,7 +25,7 @@ function LabelValue:setup()
 end
 
 function LabelValue:render()
-  return { display = Display:define() }
+  return { display = Display() }
 end
 
 function LabelValue:mount()

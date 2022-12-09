@@ -14,9 +14,11 @@ local Display = require('ui.components.Display')
 local ProgressBar = Miwos.defineComponent('ProgressBar')
 
 function ProgressBar:render()
-  return {
-    display = Display:define(),
-  }
+  return { display = Display() }
+end
+
+function ProgressBar:mount()
+  self:draw()
 end
 
 function ProgressBar:draw()

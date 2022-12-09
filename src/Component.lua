@@ -35,21 +35,21 @@ function Component:setProp(key, value)
 end
 
 function Component:constructor(props, ctx)
-  self.props = props
+  self.props = props or {}
   self.ctx = ctx
-  utils.callIfExists(self.setup, self)
-  self:__mount()
 end
 
 function Component:__mount()
-  self.children = {}
-  local childDefinitions = utils.callIfExists(self.render, self) or {}
-  for name, definition in pairs(childDefinitions) do
-    local ChildComponent, childProps, childCtx = unpack(definition)
-    local child = ChildComponent(childProps, childCtx or self.ctx)
+  utils.callIfExists(self.setup, self)
+
+  Log.info('mount')
+
+  self.children = utils.callIfExists(self.render, self) or {}
+  for name, child in pairs(self.children) do
+    child.ctx = child.ctx or self.ctx
     child.parent = self
     child.name = name
-    self.children[name] = child
+    child:__mount()
   end
 
   utils.callIfExists(self.mount, self)
