@@ -1,10 +1,13 @@
 require('Log')
 require('Timer')
 require('Hmr')
-require('Testing')
 require('Bridge')
 require('Miwos')
 require('Midi')
+require('Encoders')
+require('Buttons')
+
+local PropsView = require('ui.views.PropsView')
 
 Miwos.createPatch()
 Miwos.defineModule('Input')
@@ -33,3 +36,5 @@ Bridge.addMethod(
     fromModule:__disconnect(outputIndex, toId, inputIndex)
   end
 )
+
+Miwos.switchView(PropsView())
