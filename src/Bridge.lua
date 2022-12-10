@@ -1,8 +1,9 @@
 local EventEmitter = require('EventEmitter')
+local mixin = require('mixin')
 
 Bridge = _G.Bridge or {}
 Bridge.__methods = {}
-Bridge.__events = {}
+mixin(Bridge, EventEmitter)
 
 ---@type fun(address: string, ...: any): unknown
 function Bridge.handleOsc(address, ...)
@@ -10,7 +11,7 @@ function Bridge.handleOsc(address, ...)
   local method = Bridge.__methods[address]
   local result
   if type(method) == 'function' then result = method(...) end
-  EventEmitter.emit(Bridge, address, ...)
+  Bridge:emit(Bridge, address, ...)
   return result
 end
 
@@ -21,19 +22,4 @@ function Bridge.addMethod(name, handler)
     return
   end
   Bridge.__methods[name] = handler
-end
-
----@type fun(name: string, handler: function)
-function Bridge.on(name, handler)
-  EventEmitter.on(Bridge, name, handler)
-end
-
----@type fun(name: string, handler: function)
-function Bridge.off(name, handler)
-  EventEmitter.off(Bridge, name, handler)
-end
-
----@type fun(name: string, handler: function)
-function Bridge.once(name, handler)
-  EventEmitter.once(Bridge, name, handler)
 end
