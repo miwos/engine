@@ -19,19 +19,19 @@ function Component:event(name, callback)
   self.__events[name] = callback
 end
 
-function Component:dispatch(name, ...)
+function Component:callEvent(name, ...)
   utils.callIfExists(self.__events[name], self, ...)
 end
 
 function Component:emit(name, ...)
   if not self.parent then return end
   local event = self.name .. ':' .. name
-  self.parent:dispatch(event, ...)
+  self.parent:callEvent(event, ...)
 end
 
 function Component:setProp(key, value)
   self.props[key] = value
-  self:dispatch('prop[' .. key .. ']:change', value)
+  self:callEvent('prop[' .. key .. ']:change', value)
 end
 
 function Component:constructor(props, ctx)
@@ -42,22 +42,30 @@ end
 function Component:__mount()
   utils.callIfExists(self.setup, self)
 
-  Log.info('mount')
-
   self.children = utils.callIfExists(self.render, self) or {}
   for name, child in pairs(self.children) do
-    child.ctx = child.ctx or self.ctx
-    child.parent = self
-    child.name = name
-    child:__mount()
+    self:addChild(name, child)
   end
 
   utils.callIfExists(self.mount, self)
 end
 
+function Component:addChild(name, child)
+  child.ctx = child.ctx or self.ctx
+  child.parent = self
+  child.name = name
+  child:__mount()
+  self.children[name] = child
+end
+
+function Component:removeChild(child)
+  child:__unmount()
+  self.children[child.name] = nil
+end
+
 function Component:__unmount()
   for _, child in pairs(self.children) do
-    child:__unmount()
+    self:removeChild(child)
   end
   utils.callIfExists(self.unmount, self)
 end

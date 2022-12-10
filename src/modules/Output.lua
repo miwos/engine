@@ -1,22 +1,25 @@
 ---@class ModuleOutput : Module
 local Output = Miwos.defineModule('Output', {
   inputs = { 'midi' },
+  props = {
+    device = Prop.Number({ min = 1, max = 13, step = 1 }),
+  },
 })
 
-Output:on('prop:beforeChange', function(self)
+Output:event('prop:beforeChange', function(self)
   -- Finish the notes *before* either `device` or `cable` has changed, so we can
-  -- send all unfinished notes to their correct location.
+  -- send them to their correct location.
   self:__finishNotes()
 end)
 
-Output:on('input', function(self, message)
+Output:event('input[1]', function(self, message)
   self:output(1, message)
 end)
 
----Override `Module.__handleOutput()` to send the message directly via midi.
----@param message MidiMessage
-function Output:__handleOutput(_, _, message)
-  Midi:send(1, message, 1)
+---Override `Module.__output()` to send the message directly via midi.
+---@type fun(self, _, message: MidiMessage)
+function Output:__output(_, message)
+  Midi:send(self.props.device, message, 1)
 end
 
 return Output

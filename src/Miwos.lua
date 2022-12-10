@@ -11,32 +11,23 @@ Miwos = _G.Miwos or {}
 
 Miwos.moduleDefinitions = {}
 
-function Miwos.loadPatch() end
-
-function Miwos.createPatch()
-  local patch = Patch()
-  Miwos.patch = patch
-  return Patch
-end
-
 ---@alias Signal 'midi' | 'trigger'
 ---@class ModuleOptions
 ---@field inputs Signal[]
 ---@field outputs Signal[]
 
 ---@type fun(name: string, options: ModuleOptions): Module
-function Miwos.defineModule(name, options)
+function Miwos.defineModule(name, definition)
   local module = class(Module) --[[@as Module]]
   module.__type = name
   module.__events = {}
-  module.__options = options
-  Miwos.moduleDefinitions[name] = Module
+  module.__definition = definition
+  Miwos.moduleDefinitions[name] = module
   return module
 end
 
-function Miwos.defineProp(name)
-  local prop = class(EventEmitter)
-  return prop
+function Miwos.defineProp(name, component)
+  Prop.list[name] = component
 end
 
 ---@type fun(type: string): Component
@@ -50,6 +41,13 @@ end
 ---@type fun(view: Component)
 function Miwos.switchView(view)
   local prevView = Miwos.view
-  if prevView then prevView:__destroy() end
+  if prevView then prevView:__unmount() end
+  view:__mount()
   Miwos.view = view
+end
+
+function Miwos.loadPatch(name)
+  local data = loadfile('lua/patches/' .. name .. '.lua')()
+  Miwos.patch = Patch()
+  Miwos.patch:deserialize(data)
 end

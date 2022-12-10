@@ -1,17 +1,18 @@
-require('Log')
-require('Timer')
-require('Hmr')
 require('Bridge')
-require('Miwos')
-require('Midi')
-require('Encoders')
 require('Buttons')
+require('Encoders')
+require('Hmr')
+require('Leds')
+require('Log')
+require('Midi')
+require('Miwos')
+require('Prop')
+require('Timer')
+
+require('modules.Input')
+require('modules.Output')
 
 local PropsView = require('ui.views.PropsView')
-
-Miwos.createPatch()
-Miwos.defineModule('Input')
-Miwos.defineModule('Output')
 
 Bridge.addMethod('/e/modules/add', function(...)
   return Miwos.patch:addModule(...)
@@ -37,4 +38,5 @@ Bridge.addMethod(
   end
 )
 
-Miwos.switchView(PropsView())
+Miwos.loadPatch('patch1')
+Miwos.switchView(PropsView({ patch = Miwos.patch }))

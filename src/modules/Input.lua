@@ -1,19 +1,28 @@
 ---@class ModuleInput : Module
 local Input = Miwos.defineModule('Input', {
   outputs = { 'midi' },
+  props = {
+    device = Prop.Number({ min = 1, max = 13, step = 1 }),
+  },
 })
 
-function Input:init()
+function Input:setup()
   self.midiInputEventHandler = Midi:on('input', function(...)
     self:handleMidiInput(...)
   end)
 end
 
-function Input:handleMidiInput(index, message, cable)
-  local isSameDevice = true
-  local isSameCable = true
+function Input:handleMidiInput(device, message, cable)
+  local isSameDevice = device == self.props.device
+  local isSameCable = cable == self.props.cable
   if isSameDevice and isSameCable then self:output(1, message, cable) end
 end
+
+Input:event('prop:beforeChange', function(self)
+  -- Finish the notes *before* either `device` or `cable` has changed, so we can
+  -- send them to their correct location.
+  self:__finishNotes()
+end)
 
 function Input:destroy()
   Midi:off('input', self.midiInputEventHandler)

@@ -6,7 +6,7 @@
 local Encoder = Miwos.defineComponent()
 
 function Encoder:setup()
-  self.index = self.props.index or self.ctx.slot
+  self.index = self.props.index or self.ctx.slot or 1
   self.changeHandler = Encoders:on('change', function(index, value)
     if index == self.index then self:emit('change', value) end
   end)
@@ -21,7 +21,7 @@ function Encoder:setRange(min, max)
 end
 
 function Encoder:unmount()
-  Encoders:off(self.changeHandler)
+  Encoders:off('change', self.changeHandler)
 end
 
 return Encoder

@@ -97,4 +97,8 @@ function utils.getUsedMemory()
   return collectgarbage('count')
 end
 
+function utils.capitalize(str)
+  return str:sub(1, 1):upper() .. str:sub(2)
+end
+
 return utils

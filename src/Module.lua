@@ -1,24 +1,27 @@
 local class = require('class')
-local EventEmitter = require('EventEmitter')
 local utils = require('utils')
 
----@class Module : Class, EventEmitter
----@field init function | nil
-local Module = class(EventEmitter)
+---@class Module : Class
+---@field __definition table
+---@field __events table<string, function>
+---@field setup function | nil
+local Module = class()
 
-function Module:constructor()
+function Module:constructor(props)
   self.__inputs = {}
   self.__outputs = {}
   self.__activeNotes = {}
+  self.props = props
 
-  utils.callIfExists(self.init, self)
+  utils.callIfExists(self.setup, self)
 end
 
-function Module:defineProps(definitions)
-  for index, prop in ipairs(definitions) do
-    prop.index = index
-  end
-  self.__propDefinitions = definitions
+function Module:event(name, handler)
+  self.__events[name] = handler
+end
+
+function Module:callEvent(name, ...)
+  utils.callIfExists(self.__events[name], self, ...)
 end
 
 ---@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
@@ -50,7 +53,7 @@ function Module:output(index, message, cable)
     self.__activeNotes[index][noteId] = isNoteOn and true or nil
   end
 
-  self:__output(signal, index)
+  self:__output(index, message)
 end
 
 function Module:__output(index, message)
@@ -62,12 +65,21 @@ function Module:__output(index, message)
         local name = message and message.name or 'trigger'
         local numberedInput = 'input[' .. inputIndex .. ']'
 
-        -- Emit various input events (e.g.: 'input', 'input:noteOn', 'input[1]',
-        -- input[1]:noteOn).
-        inputModule:emit('input', inputIndex, message)
-        inputModule:emit('input:' .. name, inputIndex, message)
-        inputModule:emit(numberedInput, message)
-        inputModule:emit(numberedInput .. ':' .. name, message)
+        inputModule:callEvent('input', inputIndex, message)
+        inputModule:callEvent('input:' .. name, inputIndex, message)
+        inputModule:callEvent(numberedInput, message)
+        inputModule:callEvent(numberedInput .. ':' .. name, message)
+      end
+    end
+  end
+end
+
+function Module:__finishNotes(output)
+  for index, noteIds in pairs(self.__activeNotes) do
+    if not output or index == output then
+      for noteId in pairs(noteIds) do
+        local note, channel = Midi.parseNoteId(noteId)
+        self:__output(index, Midi.NoteOff(note, 0, channel))
       end
     end
   end

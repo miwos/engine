@@ -1,11 +1,12 @@
 local ProgressBar = require('ui.components.ProgressBar')
 local LabelValue = require('ui.components.LabelValue')
-local utils = require('utils')
 local Encoder = require('ui.components.Encoder')
 local Display = require('ui.components.Display')
+local utils = require('utils')
 
----@class NumberFieldProps
+---@class NumberProps
 ---@field value number
+---@field label string
 ---@field min number
 ---@field max number
 ---@field step number
@@ -13,16 +14,16 @@ local Display = require('ui.components.Display')
 ---@field scaleUnit number
 ---@field scaleCount number
 
----@class NumberField : Component
----@field props NumberFieldProps
-local NumberField = Miwos.defineComponent('NumberField')
+---@class Number : Component
+---@field props NumberProps
+local Number = Miwos.defineComponent('Number')
 
 local function ease(x)
   return 1.383493
     + (0.00001915815 - 1.383493) / (1 + (x / 0.3963062) ^ 1.035488)
 end
 
-function NumberField:render()
+function Number:render()
   local props = self.props
   local scaleStep = 0
 
@@ -41,7 +42,7 @@ function NumberField:render()
       y = Display.height - 7,
       width = Display.width,
       height = 7,
-      value = props.value,
+      value = utils.mapValue(props.value, props.min, props.max, 0, 1),
       showScale = props.showScale,
       scaleStep = scaleStep,
     }),
@@ -50,12 +51,12 @@ function NumberField:render()
       y = 0,
       width = Display.width,
       height = Display.height - 7,
-      label = 'Fu',
+      label = self.props.label,
     }),
   }
 end
 
-function NumberField:mount()
+function Number:mount()
   local props = self.props
   self.encoderMax = math.floor(ease((props.max - props.min) / 127) * 127)
 
@@ -64,20 +65,25 @@ function NumberField:mount()
   encoder:write(self:encodeValue(self.props.value))
 end
 
-NumberField:event('encoder:change', function(self, rawValue)
+Number:event('encoder:change', function(self, rawValue)
   local props = self.props
+
   local value = self:decodeValue(rawValue)
-  local normalizedValue = utils.mapValue(value, props.min, props.max, 0, 1)
   self.children.labelValue:setProp('value', value)
+  local normalizedValue = utils.mapValue(value, props.min, props.max, 0, 1)
   self.children.progressBar:setProp('value', normalizedValue)
+
+  local oldValue = props.value
+  props.value = value
+  if value ~= oldValue then self:emit('updateValue', value) end
 end)
 
-function NumberField:encodeValue(value)
+function Number:encodeValue(value)
   local props = self.props
   return utils.mapValue(value, props.min, props.max, 0, self.encoderMax)
 end
 
-function NumberField:decodeValue(rawValue)
+function Number:decodeValue(rawValue)
   local props = self.props
   local scaledValue =
     utils.mapValue(rawValue, 0, self.encoderMax, props.min, props.max)
@@ -86,4 +92,4 @@ function NumberField:decodeValue(rawValue)
     or scaledValue
 end
 
-return NumberField
+return Number

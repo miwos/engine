@@ -1,30 +1,78 @@
-local NumberField = require('ui.components.NumberField')
+local utils = require('utils')
 local PropsView = Miwos.defineComponent('PropsView')
+local Buttons = require('ui.components.Buttons')
+local Leds = require('ui.components.Leds')
+
+function PropsView:setup()
+  self.pageIndex = 1
+  self.page = self.props.patch.mappings[self.pageIndex] or {}
+end
+
+function PropsView:mount()
+  self:renderPage()
+end
 
 function PropsView:render()
-  return {
-    NumberField({
-      value = 0,
-      min = 0,
-      max = 12,
-      showScale = true,
-      step = 1,
-    }, { slot = 1 }),
-    NumberField({
-      value = 0,
-      min = 0,
-      max = 12,
-      showScale = true,
-      step = 1,
-    }, { slot = 2 }),
-    NumberField({
-      value = 0,
-      min = 0,
-      max = 12,
-      showScale = true,
-      step = 1,
-    }, { slot = 3 }),
-  }
+  return { buttons = Buttons(), leds = Leds() }
+end
+
+function PropsView:renderPage()
+  for i = 1, 3 do
+    Displays.clear(i)
+    Displays.update(i)
+    local child = self.children['slot' .. i]
+    if child then child:__unmount() end
+
+    local ledState = i == self.pageIndex
+    local ledIndex = i + 3 -- leds 4,5,6 represent pages 1,2,3
+    self.children.leds:toggle(ledIndex, ledState)
+  end
+
+  for slot, mapping in pairs(self.page) do
+    local module, propName = unpack(mapping)
+    local propValue = module.props[propName]
+    local Component, props = unpack(module.__definition.props[propName])
+    props.value = propValue
+    props.label = utils.capitalize(propName)
+    self:addChild('slot' .. slot, Component(props, { slot = slot }))
+  end
+end
+
+PropsView:event('buttons:click', function(self, index)
+  if index < 4 or index > 6 then return end
+  self.pageIndex = index - 3 -- buttons 4,5,6 select page 1,2,3
+  self.page = self.props.patch.mappings[self.pageIndex] or {}
+  self:renderPage()
+end)
+
+PropsView:event('slot1:updateValue', function(self, value)
+  self:handlePropUpdate(1, value)
+end)
+
+PropsView:event('slot2:updateValue', function(self, value)
+  self:handlePropUpdate(2, value)
+end)
+
+PropsView:event('slot3:updateValue', function(self, value)
+  self:handlePropUpdate(3, value)
+end)
+
+function PropsView:handlePropUpdate(slot, value)
+  local mapping = self.page[slot]
+  if not mapping then
+    Log.warn(string.format('mapping for slot %s not found', 1))
+    return
+  end
+
+  local module, propName = unpack(self.page[slot])
+
+  module:callEvent('prop:beforeChange', propName, value)
+  module:callEvent('prop[' .. propName .. ']:beforeChange', value)
+
+  module.props[propName] = value
+
+  module:callEvent('prop:change', propName, value)
+  module:callEvent('prop[' .. propName .. ']:change', value)
 end
 
 return PropsView
