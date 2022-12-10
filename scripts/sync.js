@@ -73,14 +73,18 @@ const syncFile = async (path, update = true) => {
   path = pathToPosix(path);
   const pathOnDevice = replaceRootDir(path, "lua");
 
-  await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
+  try {
+    await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
 
-  const isHotReplaced = await bridge.request("/lua/update", pathOnDevice);
+    const isHotReplaced = await bridge.request("/lua/update", pathOnDevice);
 
-  if (isHotReplaced) {
-    console.log(pico.green(`hmr update ${path}`));
-  } else {
-    console.log(pico.green(`reload ${path}`));
+    if (isHotReplaced) {
+      console.log(pico.green(`hmr update ${path}`));
+    } else {
+      console.log(pico.green(`reload ${path}`));
+    }
+  } catch (error) {
+    console.error(error.message);
   }
 };
 
@@ -95,6 +99,10 @@ watcher.on("ready", async () => {
   for (let path of filesToSync) {
     path = pathToPosix(path);
     const pathOnDevice = replaceRootDir(path, "lua");
-    await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
+    try {
+      await bridge.writeFile(pathOnDevice, await fs.readFile(path, "utf8"));
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 });
