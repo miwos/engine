@@ -9,7 +9,7 @@ function Patch:constructor()
   self.connections = {}
 end
 
----@type fun(self, id: number, type: string, props: table): boolean
+---@type fun(self, id: number, type: string, props?: table): boolean
 function Patch:addModule(id, type, props)
   local Module = Miwos.moduleDefinitions[type]
   if not Module then
@@ -34,19 +34,23 @@ function Patch:removeModule(moduleId)
   self.modules[moduleId] = nil
 end
 
-function Patch:deserialize(data)
+function Patch:deserialize(serialized)
   self.modules = {}
-  for id, definition in pairs(data.modules) do
-    self:addModule(id, definition.type, definition.props)
+  for _, serializedModule in pairs(serialized.modules) do
+    self:addModule(
+      serializedModule.id,
+      serializedModule.type,
+      serializedModule.props
+    )
   end
 
   self.connections = {}
-  for _, connection in pairs(data.connections) do
+  for _, connection in pairs(serialized.connections) do
     local fromId, fromIndex, toId, toIndex = unpack(connection)
     self.modules[fromId]:__connect(fromIndex, toId, toIndex)
   end
 
-  self.mappings = data.mappings
+  self.mappings = serialized.mappings or {}
   for _, page in pairs(self.mappings) do
     for slot, mapping in pairs(page) do
       -- Resolve the module and store it instead of the module id.
