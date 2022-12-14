@@ -18,8 +18,6 @@ end
 
 function PropsView:renderPage()
   for i = 1, 3 do
-    Displays.clear(i)
-    Displays.update(i)
     local child = self.children['slot' .. i]
     if child then child:__unmount() end
 
@@ -28,13 +26,20 @@ function PropsView:renderPage()
     self.children.leds:toggle(ledIndex, ledState)
   end
 
+  local emptySlots = { 1, 2, 3 }
   for slot, mapping in pairs(self.page) do
+    emptySlots[slot] = nil
     local module, propName = unpack(mapping)
     local propValue = module.props[propName]
     local Component, props = unpack(module.__definition.props[propName])
     props.value = propValue
     props.label = utils.capitalize(propName)
     self:addChild('slot' .. slot, Component(props, { slot = slot }))
+  end
+
+  for _, slot in pairs(emptySlots) do
+    Displays.clear(slot)
+    Displays.update(slot)
   end
 end
 

@@ -8,11 +8,13 @@ require('Midi')
 require('Miwos')
 require('Prop')
 require('Timer')
+local utils = require('utils')
 
 require('modules.Input')
 require('modules.Output')
 
 local PropsView = require('ui.views.PropsView')
+local MenuView = require('ui.views.MenuView')
 
 Bridge.addMethod('/e/modules/add', function(...)
   return Miwos.patch:addModule(...)
@@ -38,5 +40,19 @@ Bridge.addMethod(
   end
 )
 
+local menuOpened = false
+Buttons:on('click', function(index)
+  if index == 10 then
+    menuOpened = not menuOpened
+    if menuOpened then
+      Miwos.switchView(MenuView())
+    else
+      Miwos.switchView(PropsView({ patch = Miwos.patch }))
+    end
+  end
+end)
+
 Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
+
+-- Log.info(utils.getUsedMemory())

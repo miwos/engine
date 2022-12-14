@@ -3,6 +3,7 @@ local mixin = require('mixin')
 
 Bridge = _G.Bridge or {}
 Bridge.__methods = {}
+Bridge.__events = {}
 mixin(Bridge, EventEmitter)
 
 ---@type fun(address: string, ...: any): unknown

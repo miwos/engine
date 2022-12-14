@@ -1,5 +1,8 @@
+local utils = require('utils')
 ---@class EventEmitter
-local EventEmitter = { __events = {} }
+---@fields __events table
+
+EventEmitter = {}
 
 ---@type fun(self, event: string, callback: function): function
 function EventEmitter:on(event, callback)
@@ -33,7 +36,9 @@ function EventEmitter:emit(event, ...)
   local handlers = self.__events[event]
   if handlers ~= nil then
     for i = 1, #handlers do
-      handlers[i](...)
+      -- An event handler might alter the handlers list by calling `off()` so
+      -- we have to assume that the handler might be nil.
+      utils.callIfExists(handlers[i], ...)
     end
   end
 end

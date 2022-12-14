@@ -7,7 +7,7 @@ function ButtonsComponent:mount()
 end
 
 function ButtonsComponent:unmount()
-  Buttons:off(self.clickHanddler)
+  Buttons:off('click', self.clickHanddler)
 end
 
 return ButtonsComponent

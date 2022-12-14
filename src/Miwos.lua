@@ -3,12 +3,14 @@ local Module = require('Module')
 local Patch = require('Patch')
 local EventEmitter = require('EventEmitter')
 local Component = require('Component')
+local mixin = require('mixin')
 
----@class Miwos
+---@class Miwos : EventEmitter
 ---@field patch Patch | nil
 ---@field view Component | nil
 Miwos = _G.Miwos or {}
-
+mixin(Miwos, EventEmitter)
+Miwos.__events = {}
 Miwos.moduleDefinitions = {}
 
 ---@alias Signal 'midi' | 'trigger'
@@ -50,4 +52,5 @@ function Miwos.loadProject(name)
   local data = loadfile('lua/projects/' .. name .. '/part-1.lua')()
   Miwos.patch = Patch()
   Miwos.patch:deserialize(data)
+  Miwos:emit('patch:change', Miwos.patch)
 end
