@@ -38,5 +38,5 @@ Bridge.addMethod(
   end
 )
 
-Miwos.loadPatch('patch1')
+Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))

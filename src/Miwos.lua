@@ -46,8 +46,8 @@ function Miwos.switchView(view)
   Miwos.view = view
 end
 
-function Miwos.loadPatch(name)
-  local data = loadfile('lua/patches/' .. name .. '.lua')()
+function Miwos.loadProject(name)
+  local data = loadfile('lua/projects/' .. name .. '/part-1.lua')()
   Miwos.patch = Patch()
   Miwos.patch:deserialize(data)
 end
