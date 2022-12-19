@@ -2,7 +2,8 @@
 local Output = Miwos.defineModule('Output', {
   inputs = { 'midi' },
   props = {
-    device = Prop.Number({ min = 1, max = 13, step = 1 }),
+    device = Prop.Number({ value = 1, min = 1, max = 13, step = 1 }),
+    cable = Prop.Number({ value = 1, min = 1, max = 16, step = 1 }),
   },
 })
 

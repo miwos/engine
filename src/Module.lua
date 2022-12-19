@@ -5,15 +5,24 @@ local utils = require('utils')
 ---@field __definition table
 ---@field __events table<string, function>
 ---@field setup function | nil
+---@field destroy function | nil
 local Module = class()
 
 function Module:constructor(props)
   self.__inputs = {}
   self.__outputs = {}
   self.__activeNotes = {}
-  self.props = props
-
+  self.props = props or self:getDefaultProps()
+  Log.dump(self.props)
   utils.callIfExists(self.setup, self)
+end
+
+function Module:getDefaultProps()
+  local props = {}
+  for key, definition in pairs(self.__definition.props or {}) do
+    props[key] = definition[2].value
+  end
+  return props
 end
 
 function Module:event(name, handler)
@@ -74,6 +83,7 @@ function Module:__output(index, message)
   end
 end
 
+---@param output? number
 function Module:__finishNotes(output)
   for index, noteIds in pairs(self.__activeNotes) do
     if not output or index == output then
@@ -83,6 +93,11 @@ function Module:__finishNotes(output)
       end
     end
   end
+end
+
+function Module:__destroy()
+  self:__finishNotes()
+  utils.callIfExists(self.destroy, self)
 end
 
 return Module
