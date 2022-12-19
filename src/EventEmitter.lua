@@ -1,7 +1,7 @@
 local utils = require('utils')
 
 ---@class EventEmitter
----@fields __events table
+---@field __events table
 EventEmitter = {}
 
 ---@type fun(self, event: string, callback: function): function
