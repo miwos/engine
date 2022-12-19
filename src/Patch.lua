@@ -7,6 +7,7 @@ local Patch = class()
 function Patch:constructor()
   self.modules = {}
   self.connections = {}
+  self.mappings = {}
 end
 
 ---@type fun(self, id: number, type: string, props?: table): boolean
@@ -31,6 +32,8 @@ end
 
 ---@type fun(self, moduleId: number)
 function Patch:removeModule(moduleId)
+  local module = self.modules[moduleId]
+  module:__destroy()
   self.modules[moduleId] = nil
 end
 
