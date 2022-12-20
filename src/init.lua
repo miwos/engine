@@ -51,6 +51,15 @@ Bridge.addMethod('/e/modules/definitions', function()
   return utils.serialize(definitions)
 end)
 
+Bridge.addMethod('/e/modules/prop', function(moduleId, name, value)
+  Miwos.patch:updateProp(moduleId, name, value)
+  Miwos:emit('prop:change', moduleId, name, value)
+end)
+
+Bridge.addMethod('/e/patch/clear', function()
+  Miwos.patch:clear()
+end)
+
 local menuOpened = false
 Buttons:on('click', function(index)
   if index == 10 then

@@ -10,7 +10,19 @@ end
 
 function PropsView:mount()
   self:renderPage()
+  self.propChangeHandler = Miwos:on(
+    'prop:change',
+    function(moduleId, name, value)
+      for _, slot in pairs(self.children) do
+        if slot.__moduleId == moduleId and slot.__propName == name then
+          slot:setProp('value', value)
+        end
+      end
+    end
+  )
 end
+
+function PropsView:updateProp() end
 
 function PropsView:render()
   return { buttons = Buttons(), leds = Leds() }
@@ -32,9 +44,15 @@ function PropsView:renderPage()
     local module, propName = unpack(mapping)
     local propValue = module.props[propName]
     local Component, props = unpack(module.__definition.props[propName])
+
     props.value = propValue
     props.label = utils.capitalize(propName)
-    self:addChild('slot' .. slot, Component(props, { slot = slot }))
+
+    local component = Component(props, { slot = slot })
+    component.__propName = propName
+    component.__moduleId = module.__id
+
+    self:addChild('slot' .. slot, component)
   end
 
   for _, slot in pairs(emptySlots) do
@@ -70,14 +88,9 @@ function PropsView:handlePropUpdate(slot, value)
   end
 
   local module, propName = unpack(self.page[slot])
+  self.props.patch:updateProp(module.__id, propName, value)
 
-  module:callEvent('prop:beforeChange', propName, value)
-  module:callEvent('prop[' .. propName .. ']:beforeChange', value)
-
-  module.props[propName] = value
-
-  module:callEvent('prop:change', propName, value)
-  module:callEvent('prop[' .. propName .. ']:change', value)
+  Bridge.notify('/e/modules/prop', module.__id, propName, value)
 end
 
 return PropsView

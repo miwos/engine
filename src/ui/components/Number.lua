@@ -78,6 +78,17 @@ Number:event('encoder:change', function(self, rawValue)
   if value ~= oldValue then self:emit('updateValue', value) end
 end)
 
+Number:event('prop[value]:change', function(self, value)
+  local props = self.props
+  local encoder = self.children.encoder --[[@as Encoder]]
+  encoder:write(self:encodeValue(props.value))
+
+  self.children.progressBar:setProp(
+    'value',
+    utils.mapValue(props.value, props.min, props.max, 0, 1)
+  )
+end)
+
 function Number:encodeValue(value)
   local props = self.props
   return utils.mapValue(value, props.min, props.max, 0, self.encoderMax)

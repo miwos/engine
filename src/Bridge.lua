@@ -1,6 +1,8 @@
 local EventEmitter = require('EventEmitter')
 local mixin = require('mixin')
 
+---@class Bridge: EventEmitter
+---@field notify fun(address: string, ...: number | boolean | string)
 Bridge = _G.Bridge or {}
 Bridge.__methods = {}
 Bridge.__events = {}
@@ -12,7 +14,7 @@ function Bridge.handleOsc(address, ...)
   local method = Bridge.__methods[address]
   local result
   if type(method) == 'function' then result = method(...) end
-  Bridge:emit(Bridge, address, ...)
+  Bridge:emit(address, ...)
   return result
 end
 

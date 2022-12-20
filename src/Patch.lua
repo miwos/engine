@@ -1,7 +1,7 @@
 local class = require('class')
 
 ---@class Patch: Class
----@field modules table<string, Module>
+---@field modules table<number, Module>
 local Patch = class()
 
 function Patch:constructor()
@@ -35,6 +35,31 @@ function Patch:removeModule(moduleId)
   local module = self.modules[moduleId]
   module:__destroy()
   self.modules[moduleId] = nil
+end
+
+function Patch:clear()
+  for id in pairs(self.modules) do
+    self:removeModule(id)
+  end
+  self.connections = {}
+  self.mappings = {}
+  -- TODO: clear PropsView
+end
+
+function Patch:updateProp(moduleId, name, value)
+  local module = self.modules[moduleId]
+  if not module then
+    Log.warn(string.format('module with id `%s` not found', moduleId))
+    return false
+  end
+
+  module:callEvent('prop:beforeChange', name, value)
+  module:callEvent('prop[' .. name .. ']:beforeChange', value)
+
+  module.props[name] = value
+
+  module:callEvent('prop:change', name, value)
+  module:callEvent('prop[' .. name .. ']:change', value)
 end
 
 function Patch:deserialize(serialized)
