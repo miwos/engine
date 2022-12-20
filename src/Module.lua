@@ -2,6 +2,7 @@ local class = require('class')
 local utils = require('utils')
 
 ---@class Module : Class
+---@field __type string
 ---@field __definition table
 ---@field __events table<string, function>
 ---@field setup function | nil
@@ -13,8 +14,22 @@ function Module:constructor(props)
   self.__outputs = {}
   self.__activeNotes = {}
   self.props = props or self:getDefaultProps()
-  Log.dump(self.props)
   utils.callIfExists(self.setup, self)
+end
+
+function Module:serializeDefinition()
+  local props = {}
+  for key, definition in pairs(self.__definition.props) do
+    local Component, options = unpack(definition)
+    props[key] = { Component.__type, options }
+  end
+
+  return {
+    id = self.__type,
+    inputs = self.__definition.inputs,
+    outputs = self.__definition.outputs,
+    props = props,
+  }
 end
 
 function Module:getDefaultProps()

@@ -40,6 +40,17 @@ Bridge.addMethod(
   end
 )
 
+Bridge.addMethod('/e/modules/definitions', function()
+  local definitions = {}
+  local files = FileSystem.listFiles('lua/modules')
+  for _, baseName in pairs(files) do
+    ---@type Module
+    local module = loadfile('lua/modules' .. '/' .. baseName)()
+    definitions[#definitions + 1] = module:serializeDefinition()
+  end
+  return utils.serialize(definitions)
+end)
+
 local menuOpened = false
 Buttons:on('click', function(index)
   if index == 10 then
