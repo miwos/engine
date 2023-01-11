@@ -6,7 +6,7 @@ import chokidar from "chokidar";
 import pico from "picocolors";
 import fs from "fs/promises";
 import { createColorize } from "colorize-template";
-import { highlightLuaDump, highlightLuaStack } from "@miwos/highlight-lua-dump";
+import { highlightLuaDump, highlightLuaStack } from "@miwos/lua-dump";
 import { parse } from "lua-json";
 import { SerialPort } from "serialport";
 
