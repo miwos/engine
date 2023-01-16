@@ -138,8 +138,8 @@ function Module.__hmrAccept(definition)
 end
 
 function Module.__hmrDecline(definition)
-  -- We only want to hot reload actual modules, not the (abstract) module bass
-  -- class itself. Only modules registered with `Miwos.defineModule()` have an
+  -- We only want to hot replace actual modules, not the (abstract) module base
+  -- class itself. Only modules registered with `Miwos.defineModule()` have a
   -- `__type`.
   return not definition.__type
 end
