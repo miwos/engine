@@ -7,6 +7,7 @@ specifiers:
   lua-json: ^1.0.1
   picocolors: ^1.0.0
   serialport: ^10.5.0
+  ws: ^8.12.0
 
 dependencies:
   serialport: 10.5.0
@@ -17,6 +18,7 @@ devDependencies:
   colorize-template: 1.0.0
   lua-json: 1.0.1
   picocolors: 1.0.0
+  ws: 8.12.0
 
 packages:
 
@@ -290,4 +292,17 @@ packages:
     engines: {node: '>=8.0'}
     dependencies:
       is-number: 7.0.0
+    dev: true
+
+  /ws/8.12.0:
+    resolution: {integrity: sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: true
