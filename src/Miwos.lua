@@ -35,7 +35,7 @@ end
 
 ---@type fun(type: string): Component
 function Miwos.defineComponent(type)
-  local component = class(Component) --[[@as Component]]
+  local component = class(Component) --[=[@as Component]=]
   component.__type = type
   component.__events = {}
   return component
