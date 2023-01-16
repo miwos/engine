@@ -62,6 +62,17 @@ function Patch:updateProp(moduleId, name, value)
   module:callEvent('prop[' .. name .. ']:change', value)
 end
 
+function Patch:addMapping(page, slot, id, prop)
+  self.mappings[page] = self.mappings[page] or {}
+  local module = self.modules[id]
+  self.mappings[page][slot] = { module, prop }
+end
+
+function Patch:removeMapping(page, slot)
+  if not self.mappings[page] then return end
+  self.mappings[page][slot] = nil
+end
+
 function Patch:deserialize(serialized)
   self.modules = {}
   for _, serializedModule in pairs(serialized.modules) do

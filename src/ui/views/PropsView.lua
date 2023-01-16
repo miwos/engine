@@ -10,6 +10,7 @@ end
 
 function PropsView:mount()
   self:renderPage()
+
   self.propChangeHandler = Miwos:on(
     'prop:change',
     function(moduleId, name, value)
@@ -20,9 +21,13 @@ function PropsView:mount()
       end
     end
   )
-end
 
-function PropsView:updateProp() end
+  self.patchChangeHandler = Miwos:on('patch:change', function()
+    -- Refresh mappings page.
+    self.page = self.props.patch.mappings[self.pageIndex] or {}
+    self:renderPage()
+  end)
+end
 
 function PropsView:render()
   return { buttons = Buttons(), leds = Leds() }
@@ -83,7 +88,7 @@ end)
 function PropsView:handlePropUpdate(slot, value)
   local mapping = self.page[slot]
   if not mapping then
-    Log.warn(string.format('mapping for slot %s not found', 1))
+    Log.warn(string.format('mapping for slot %s not found', slot))
     return
   end
 
@@ -91,6 +96,11 @@ function PropsView:handlePropUpdate(slot, value)
   self.props.patch:updateProp(module.__id, propName, value)
 
   Bridge.notify('/e/modules/prop', module.__id, propName, value)
+end
+
+function PropsView:unmount()
+  Miwos:off('prop:change', self.propChangeHandler)
+  Miwos:off('patch:change', self.patchChangeHandler)
 end
 
 return PropsView

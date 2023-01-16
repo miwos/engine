@@ -58,6 +58,17 @@ end)
 
 Bridge.addMethod('/e/patch/clear', function()
   Miwos.patch:clear()
+  Miwos:emit('patch:change')
+end)
+
+Bridge.addMethod('/e/mappings/add', function(page, slot, id, prop)
+  Miwos.patch:addMapping(page, slot, id, prop)
+  Miwos:emit('patch:change')
+end)
+
+Bridge.addMethod('/e/mappings/remove', function(page, slot)
+  Miwos.patch:removeMapping(page, slot)
+  Miwos:emit('patch:change')
 end)
 
 local menuOpened = false
@@ -76,3 +87,4 @@ Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
 
 -- Log.info(utils.getUsedMemory())
+Log.info('hallo')
