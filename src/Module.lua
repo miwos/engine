@@ -8,6 +8,7 @@ local utils = require('utils')
 ---@field setup function | nil
 ---@field destroy function | nil
 local Module = class()
+Module.__hmrKeep = {}
 
 function Module:constructor(props)
   self.__inputs = {}
@@ -110,9 +111,37 @@ function Module:__finishNotes(output)
   end
 end
 
+function Module:__saveState()
+  local state = { props = self.props }
+
+  for _, key in pairs(self.__hmrKeep) do
+    state[key] = self[key]
+  end
+
+  return state
+end
+
+function Module:__applyState(state)
+  self.props = state.props
+  for _, key in pairs(self.__hmrKeep) do
+    if state[key] ~= nil then self[key] = state[key] end
+  end
+end
+
 function Module:__destroy()
   self:__finishNotes()
   utils.callIfExists(self.destroy, self)
+end
+
+function Module.__hmrAccept(definition)
+  if Miwos.patch then Miwos.patch:updateModuleDefinition(definition) end
+end
+
+function Module.__hmrDecline(definition)
+  -- We only want to hot reload actual modules, not the (abstract) module bass
+  -- class itself. Only modules registered with `Miwos.defineModule()` have an
+  -- `__type`.
+  return not definition.__type
 end
 
 return Module

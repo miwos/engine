@@ -37,6 +37,27 @@ function Patch:removeModule(moduleId)
   self.modules[moduleId] = nil
 end
 
+---@param Definition Module
+function Patch:updateModuleDefinition(Definition)
+  for id, module in pairs(self.modules) do
+    if module.__type == Definition.__type then
+      local state = module:__saveState()
+      module:__destroy()
+
+      ---@type Module
+      local newModule = Definition()
+      newModule:__applyState(state)
+      newModule.__id = id
+      self.modules[id] = newModule
+
+      for _, connection in ipairs(self.connections) do
+        local _, fromIndex, toId, toIndex = unpack(connection)
+        newModule:__connect(fromIndex, toId, toIndex)
+      end
+    end
+  end
+end
+
 function Patch:clear()
   for id in pairs(self.modules) do
     self:removeModule(id)
@@ -83,7 +104,8 @@ function Patch:deserialize(serialized)
     )
   end
 
-  self.connections = {}
+  -- TODO: what is `connections = {}` doing?
+  self.connections = serialized.connections
   for _, connection in pairs(serialized.connections) do
     local fromId, fromIndex, toId, toIndex = unpack(connection)
     self.modules[fromId]:__connect(fromIndex, toId, toIndex)
