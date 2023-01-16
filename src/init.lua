@@ -71,6 +71,11 @@ Bridge.addMethod('/e/mappings/remove', function(page, slot)
   Miwos:emit('patch:change')
 end)
 
+Bridge.addMethod('/e/project/load', function(name)
+  Miwos.loadProject(name, false)
+  Miwos.switchView(PropsView({ patch = Miwos.patch }))
+end)
+
 local menuOpened = false
 Buttons:on('click', function(index)
   if index == 10 then
@@ -83,7 +88,8 @@ Buttons:on('click', function(index)
   end
 end)
 
-Miwos.loadProject('test')
+Miwos.loadSettings()
+Miwos.loadProject(Miwos.settings.recentProject)
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
 
 -- Log.info(utils.getUsedMemory())

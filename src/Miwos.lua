@@ -4,6 +4,7 @@ local Patch = require('Patch')
 local EventEmitter = require('EventEmitter')
 local Component = require('Component')
 local mixin = require('mixin')
+local utils = require('utils')
 
 ---@class Miwos : EventEmitter
 ---@field patch Patch | nil
@@ -48,9 +49,25 @@ function Miwos.switchView(view)
   Miwos.view = view
 end
 
-function Miwos.loadProject(name)
+function Miwos.loadProject(name, updateApp)
   local data = loadfile('lua/projects/' .. name .. '/part-1.lua')()
   Miwos.patch = Patch()
   Miwos.patch:deserialize(data)
   Miwos:emit('patch:change', Miwos.patch)
+
+  if utils.option(updateApp, true) then
+    Bridge.notify('/e/project/open', name)
+  end
+end
+
+function Miwos.loadSettings()
+  local file = 'lua/settings.lua'
+  local data = FileSystem.fileExists(file) and loadfile(file)() or {}
+  Miwos.settings = data
+end
+
+function Miwos.saveSettings()
+  local file = 'lua/settings.lua'
+  local content = 'return ' .. utils.serialize(Miwos.settings, true)
+  local result = FileSystem.writeFile(file, content)
 end
