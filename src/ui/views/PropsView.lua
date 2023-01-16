@@ -45,19 +45,27 @@ function PropsView:renderPage()
 
   local emptySlots = { 1, 2, 3 }
   for slot, mapping in pairs(self.page) do
-    emptySlots[slot] = nil
     local module, propName = unpack(mapping)
     local propValue = module.props[propName]
-    local Component, props = unpack(module.__definition.props[propName])
+    local propDefinition = module.__definition.props[propName]
 
-    props.value = propValue
-    props.label = utils.capitalize(propName)
+    if propDefinition then
+      emptySlots[slot] = nil
+      local Component, props = unpack(module.__definition.props[propName])
 
-    local component = Component(props, { slot = slot })
-    component.__propName = propName
-    component.__moduleId = module.__id
+      props.value = propValue
+      props.label = utils.capitalize(propName)
 
-    self:addChild('slot' .. slot, component)
+      local component = Component(props, { slot = slot })
+      component.__propName = propName
+      component.__moduleId = module.__id
+
+      self:addChild('slot' .. slot, component)
+    else
+      Log.warn(
+        string.format("couldn't find prop '%s' in %s", propName, module.__type)
+      )
+    end
   end
 
   for _, slot in pairs(emptySlots) do
