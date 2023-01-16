@@ -49,11 +49,6 @@ function Patch:updateModuleDefinition(Definition)
       newModule:__applyState(state)
       newModule.__id = id
       self.modules[id] = newModule
-
-      for _, connection in ipairs(self.connections) do
-        local _, fromIndex, toId, toIndex = unpack(connection)
-        newModule:__connect(fromIndex, toId, toIndex)
-      end
     end
   end
 end

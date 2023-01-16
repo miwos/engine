@@ -20,7 +20,7 @@ end
 
 function Module:serializeDefinition()
   local props = {}
-  for key, definition in pairs(self.__definition.props) do
+  for key, definition in pairs(self.__definition.props or {}) do
     local Component, options = unpack(definition)
     props[key] = { Component.__type, options }
   end
@@ -112,7 +112,7 @@ function Module:__finishNotes(output)
 end
 
 function Module:__saveState()
-  local state = { props = self.props }
+  local state = { props = self.props, __outputs = self.__outputs }
 
   for _, key in pairs(self.__hmrKeep) do
     state[key] = self[key]
@@ -123,6 +123,7 @@ end
 
 function Module:__applyState(state)
   self.props = state.props
+  self.__outputs = state.__outputs
   for _, key in pairs(self.__hmrKeep) do
     if state[key] ~= nil then self[key] = state[key] end
   end
