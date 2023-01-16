@@ -19,7 +19,9 @@ function Hmr.update(modulePath)
   if
     type(newModule) == 'table' and type(newModule.__hmrAccept) == 'function'
   then
-    local shouldDecline = utils.callIfExists(oldModule.__hmrDecline, newModule)
+    local shouldDecline = type(oldModule) == 'table'
+      and utils.callIfExists(oldModule.__hmrDecline, newModule)
+
     if not shouldDecline then
       newModule.__hmrAccept(newModule)
       isHotReplaced = true
