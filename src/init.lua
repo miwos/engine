@@ -87,4 +87,3 @@ Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
 
 -- Log.info(utils.getUsedMemory())
-Log.info('hallo')
