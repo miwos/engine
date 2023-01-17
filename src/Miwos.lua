@@ -26,6 +26,7 @@ function Miwos.defineModule(name, definition)
   module.__events = {}
   module.__definition = definition
   Miwos.moduleDefinitions[name] = module
+  _G.__propIndex = nil
   return module
 end
 
