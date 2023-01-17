@@ -2,6 +2,7 @@ import { WebSocketServer } from 'ws';
 import chokidar from "chokidar";
 import fs from "fs/promises";
 import { resolve } from 'path';
+import launch from 'launch-editor'
 
 const pathToPosix = (path) => path.replace(/\\/g, "/");
 
@@ -11,9 +12,17 @@ let initialFilesSynced = false
 wss.on('connection', (ws) => {
   ws.on('message', (buffer) => {
     const data = JSON.parse(new TextDecoder().decode(buffer))
+
     if (data.method === 'deviceConnected' && !initialFilesSynced) {
-      for (let path of filesToSync) syncFile(path, false)
+      // TODO: fix, this has to async (so some sort of rpc)
+      // for (let path of filesToSync) syncFile(path, false)
       initialFilesSynced = true
+      return
+    }
+
+    if (data.method === 'launchEditor') {
+      const file = data.file.replace(/^lua\//, 'src/')
+      launch(file, 'code')
     }
   })
 
