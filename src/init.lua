@@ -46,10 +46,17 @@ Bridge.addMethod('/e/modules/definitions', function()
   local files = FileSystem.listFiles('lua/modules')
   for _, baseName in pairs(files) do
     ---@type Module
-    local module = loadfile('lua/modules' .. '/' .. baseName)()
+    local cachedModule = _LOADED['modules.' .. baseName]
+    local module = cachedModule or loadfile('lua/modules' .. '/' .. baseName)()
     definitions[#definitions + 1] = module:serializeDefinition()
   end
   return utils.serialize(definitions)
+end)
+
+Bridge.addMethod('/e/modules/definition', function(name)
+  local cachedModule = _LOADED['modules.' .. name]
+  local module = cachedModule or loadfile('lua/modules' .. '/' .. name)()
+  return utils.serialize(module:serializeDefinition())
 end)
 
 Bridge.addMethod('/e/modules/prop', function(moduleId, name, value)
