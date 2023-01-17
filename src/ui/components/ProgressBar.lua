@@ -23,7 +23,7 @@ end
 
 function ProgressBar:draw()
   local props = self.props
-  local display = self.children.display --[[@as Display]]
+  local display = self.children.display --[=[@as Display]=]
 
   -- Clear
   display:drawRoundedRectangle(

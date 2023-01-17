@@ -20,7 +20,7 @@ function List:render()
 end
 
 function List:mount()
-  local encoder = self.children.encoder --[[@as Encoder]]
+  local encoder = self.children.encoder --[=[@as Encoder]=]
   encoder:setRange(0, self.encoderMax)
   encoder:write(0)
   self:draw()
@@ -28,7 +28,7 @@ end
 
 function List:draw()
   local props = self.props
-  local display = self.children.display --[[@as Display]]
+  local display = self.children.display --[=[@as Display]=]
 
   -- Clear
   display:drawRectangle(

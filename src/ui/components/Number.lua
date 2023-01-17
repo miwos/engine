@@ -60,7 +60,7 @@ function Number:mount()
   local props = self.props
   self.encoderMax = math.floor(ease((props.max - props.min) / 127) * 127)
 
-  local encoder = self.children.encoder --[[@as Encoder]]
+  local encoder = self.children.encoder --[=[@as Encoder]=]
   encoder:setRange(0, self.encoderMax)
   encoder:write(self:encodeValue(self.props.value))
 end
@@ -80,7 +80,7 @@ end)
 
 Number:event('prop[value]:change', function(self, value)
   local props = self.props
-  local encoder = self.children.encoder --[[@as Encoder]]
+  local encoder = self.children.encoder --[=[@as Encoder]=]
   encoder:write(self:encodeValue(props.value))
 
   self.children.progressBar:setProp(

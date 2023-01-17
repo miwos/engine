@@ -22,7 +22,7 @@ end
 
 function MidiMessage:copy()
   local data1, data2 = self:data()
-  local copy = self.Class(data1, data2, self.channel) --[[@as MidiMessage]]
+  local copy = self.Class(data1, data2, self.channel) --[=[@as MidiMessage]=]
   return copy
 end
 

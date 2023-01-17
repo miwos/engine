@@ -14,7 +14,7 @@ local Display = require('ui.components.Display')
 
 ---@class LabelValue : Component
 ---@field props LabelValueProps
-local LabelValue = Miwos.defineComponent()
+local LabelValue = Miwos.defineComponent('LabelValue')
 
 ---@enum
 LabelValue.Views = { Label = 1, Value = 2 }
@@ -34,7 +34,7 @@ end
 
 function LabelValue:draw()
   local props = self.props
-  local display = self.children.display --[[@as Display]]
+  local display = self.children.display --[=[@as Display]=]
 
   -- Clear
   display:drawRectangle(
