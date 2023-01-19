@@ -14,7 +14,8 @@ function Module:constructor(props)
   self.__inputs = {}
   self.__outputs = {}
   self.__activeNotes = {}
-  self.props = props or self:getDefaultProps()
+  self.props = self:getPropsWithDefaults(props or {})
+
   utils.callIfExists(self.setup, self)
 end
 
@@ -33,10 +34,9 @@ function Module:serializeDefinition()
   }
 end
 
-function Module:getDefaultProps()
-  local props = {}
+function Module:getPropsWithDefaults(props)
   for key, definition in pairs(self.__definition.props or {}) do
-    props[key] = definition[2].value
+    if props[key] == nil then props[key] = definition[2].value end
   end
   return props
 end
@@ -122,7 +122,12 @@ function Module:__saveState()
 end
 
 function Module:__applyState(state)
-  self.props = state.props
+  -- Merge props instead of assigning them, incase a new prop was added that
+  -- wasn't part of the last state.
+  for key, value in pairs(state.props) do
+    self.props[key] = value
+  end
+
   self.__outputs = state.__outputs
   for _, key in pairs(self.__hmrKeep) do
     if state[key] ~= nil then self[key] = state[key] end
