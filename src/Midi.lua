@@ -7,6 +7,9 @@ local mixin = require('mixin')
 ---@field private __send fun(index: number, type: number, data1: number, data2: number, channel: number, cable: number)
 ---@field private __getNoteId fun(note: number, channel: number)
 ---@field parseNoteId fun(noteId: number): note: number, channel: number
+---@field start fun()
+---@field stop fun()
+---@field setTempo fun(bpm: number)
 Midi = _G.Midi or {}
 Midi.__events = {}
 mixin(Midi, EventEmitter)
@@ -46,6 +49,10 @@ function Midi.handleInput(index, type, data1, data2, channel, cable)
 
   local message = Message(data1, data2, channel)
   Midi:emit('input', index, message, cable)
+end
+
+function Midi.handleClock(tick)
+  -- Midi:send(1, Midi.NoteOn(62, 127, 1), 1)
 end
 
 ---@type fun(self, index: number, message: MidiMessage, cable: number)
