@@ -13,6 +13,7 @@ local utils = require('utils')
 require('modules.Input')
 require('modules.Output')
 require('modules.Chord')
+require('modules.Delay')
 
 local PropsView = require('ui.views.PropsView')
 local MenuView = require('ui.views.MenuView')

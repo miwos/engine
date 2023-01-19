@@ -101,4 +101,14 @@ function utils.capitalize(str)
   return str:sub(1, 1):upper() .. str:sub(2)
 end
 
+function utils.dryWetGain(dryWet)
+  if dryWet == 0.5 then
+    return 1, 1
+  elseif dryWet < 0.5 then
+    return 1, dryWet * 2
+  elseif dryWet > 0.5 then
+    return (1 - dryWet) * 2, 1
+  end
+end
+
 return utils
