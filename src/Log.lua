@@ -48,11 +48,11 @@ local timers = {}
 
 ---@type fun(label: string)
 function Log.time(label)
-  timers[label] = Timer.now()
+  timers[label] = Timer.micros()
 end
 
 ---@type fun(label: string)
 function Log.timeEnd(label)
-  Log.info(label .. ': ' .. Timer.now() - timers[label] .. 'μs')
+  Log.info(label .. ': ' .. Timer.micros() - timers[label] .. 'μs')
   timers[label] = nil
 end
