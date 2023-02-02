@@ -30,6 +30,7 @@ function Module:serializeDefinition()
     id = self.__type,
     inputs = self.__definition.inputs,
     outputs = self.__definition.outputs,
+    shape = self.__definition.shape,
     props = props,
   }
 end
