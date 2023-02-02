@@ -14,7 +14,7 @@ local LogType = {
 function Log.log(type, ...)
   local args = { ... }
   local message = ''
-  for i = 1, select('#', ...) do
+  for i = 1, #args do
     message = message .. (i > 1 and ', ' or '') .. tostring(args[i])
   end
   Log._log(type, message)
@@ -36,7 +36,7 @@ function Log.dump(...)
   local args = { ... }
   local dump = ''
 
-  for i = 1, select('#', ...) do
+  for i = 1, #args do
     local value = args[i]
     dump = dump .. (i > 1 and ', ' or '') .. utils.serialize(value)
   end
