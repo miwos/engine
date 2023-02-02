@@ -9,13 +9,24 @@ const pathToPosix = (path) => path.replace(/\\/g, "/");
 const wss = new WebSocketServer({ port: 8080 });
 let initialFilesSynced = false
 
-wss.on('connection', (ws) => {
-  ws.on('message', (buffer) => {
+const delay = async (duration) => new Promise(resolve => setTimeout(resolve, duration)) 
+
+let prevSocket
+wss.on('connection', (socket) => {
+  // For now we allow only one active connection.
+  prevSocket?.close()
+  prevSocket = socket
+
+  socket.on('message', async (buffer) => {
     const data = JSON.parse(new TextDecoder().decode(buffer))
 
     if (data.method === 'deviceConnected' && !initialFilesSynced) {
-      // TODO: fix, this has to async (so some sort of rpc)
-      // for (let path of filesToSync) syncFile(path, false)
+      for (let path of filesToSync) {
+        syncFile(path, false)
+        console.log('sync', path)
+        // Todo: make `syncFile` async and get rid of `delay()` workaround.
+        await delay(200)
+      }
       initialFilesSynced = true
       return
     }
@@ -30,7 +41,7 @@ wss.on('connection', (ws) => {
     path = pathToPosix(path);
     const content = await fs.readFile(resolve('src', path), "utf8")
     const method = update ? 'updateFile' : 'writeFile'
-    ws.send(JSON.stringify({ method, params: { path, content } }))
+    socket.send(JSON.stringify({ method, params: { path, content } }))
   }
 
   const watcher = chokidar.watch("**/*", { cwd: resolve(process.cwd(), 'src')});
