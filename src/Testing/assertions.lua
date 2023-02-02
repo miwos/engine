@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 local assertions = {}
 
 local function register(name, fn, text)
@@ -48,13 +48,13 @@ register('toBeCalledTimes', toBeCalledTimes, function(isNot, received, expected)
     return string.format(
       'expected not {success %s} %s',
       expected,
-      utils.pluralize(expected, 'call')
+      Utils.pluralize(expected, 'call')
     )
   else
     return string.format(
       'received {error %s} %s',
       calls,
-      utils.pluralize(calls, 'call')
+      Utils.pluralize(calls, 'call')
     )
   end
 end)

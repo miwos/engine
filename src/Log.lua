@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 
 Log = _G.Log or {}
 
@@ -38,7 +38,7 @@ function Log.dump(...)
 
   for i = 1, #args do
     local value = args[i]
-    dump = dump .. (i > 1 and ', ' or '') .. utils.serialize(value)
+    dump = dump .. (i > 1 and ', ' or '') .. Utils.serialize(value)
   end
 
   Log._log(LogType.Dump, dump)

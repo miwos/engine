@@ -1,5 +1,5 @@
 local class = require('class')
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class Module : Class
 ---@field __type string
@@ -16,7 +16,7 @@ function Module:constructor(props)
   self.__activeNotes = {}
   self.props = self:getPropsWithDefaults(props or {})
 
-  utils.callIfExists(self.setup, self)
+  Utils.callIfExists(self.setup, self)
 end
 
 function Module:serializeDefinition()
@@ -47,7 +47,7 @@ function Module:event(name, handler)
 end
 
 function Module:callEvent(name, ...)
-  utils.callIfExists(self.__events[name], self, ...)
+  Utils.callIfExists(self.__events[name], self, ...)
 end
 
 ---@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
@@ -105,7 +105,7 @@ function Module:__finishNotes(output)
   for index, noteIds in pairs(self.__activeNotes) do
     if not output or index == output then
       for noteId in pairs(noteIds) do
-        local note, channel = Midi.parseNoteId(noteId)
+        local note, channel = Midi:parseNoteId(noteId)
         self:__output(index, Midi.NoteOff(note, 0, channel))
       end
     end
@@ -137,7 +137,7 @@ end
 
 function Module:__destroy()
   self:__finishNotes()
-  utils.callIfExists(self.destroy, self)
+  Utils.callIfExists(self.destroy, self)
 end
 
 function Module.__hmrAccept(definition)

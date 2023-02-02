@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 ---@class ModuleDelay : Module
 local Delay = Miwos.defineModule('Delay', {
   inputs = { 'midi' },
@@ -23,14 +23,14 @@ Delay:event('input[1]', function(self, message)
   local isNoteOn = message:is(Midi.NoteOn)
   if isNoteOn and self.mono then self:cleanUpNote(message) end
 
-  local dryGain = utils.dryWetGain(self.props.dryWet / 100)
+  local dryGain = Utils.dryWetGain(self.props.dryWet / 100)
   self:sendWithGain(message, dryGain)
 
   local timer
   local gain = 1
   local function delay()
     timer = Timer.delay(function()
-      local _, wetGain = utils.dryWetGain(self.props.dryWet / 100)
+      local _, wetGain = Utils.dryWetGain(self.props.dryWet / 100)
       self:sendWithGain(message, gain * wetGain)
 
       local feed = self.props.feed / 100

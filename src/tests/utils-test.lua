@@ -1,20 +1,20 @@
-local utils = require('utils')
+local Utils = require('Utils')
 
 describe('isArray', function()
   it('handles numbers', function()
-    expect(utils.isArray(99)):toBe(false)
+    expect(Utils.isArray(99)):toBe(false)
   end)
 
   it('handles strings', function()
-    expect(utils.isArray('string')):toBe(false)
+    expect(Utils.isArray('string')):toBe(false)
   end)
 
   it('handles tables', function()
-    expect(utils.isArray({ [2] = 2, [1] = 1 })):toBe(false)
+    expect(Utils.isArray({ [2] = 2, [1] = 1 })):toBe(false)
   end)
 
   it('handles arrays', function()
-    expect(utils.isArray({ 1, 2, 3 })):toBe(true)
+    expect(Utils.isArray({ 1, 2, 3 })):toBe(true)
   end)
 end)
 

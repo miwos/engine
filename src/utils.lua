@@ -1,11 +1,12 @@
-local utils = {}
+---@diagnostic disable: undefined-field
+local Utils = _G.Utils or {}
 
-function utils.option(value, default)
+function Utils.option(value, default)
   return value == nil and default or value
 end
 
 ---From https://stackoverflow.com/a/66370080/12207499, thanks PiFace!
-function utils.isArray(t)
+function Utils.isArray(t)
   return type(t) == 'table' and #t > 0 and next(t, #t) == nil
 end
 
@@ -53,7 +54,7 @@ local function serializeTable(t, done, pretty)
 
     str = str
       .. (
-        utils.isArray(t) and serialized
+        Utils.isArray(t) and serialized
         or serializeKey(key) .. (pretty and ' = ' or '=') .. serialized
       )
 
@@ -63,45 +64,45 @@ local function serializeTable(t, done, pretty)
   return str .. (pretty and ' }' or '}')
 end
 
-function utils.serialize(value, pretty)
+function Utils.serialize(value, pretty)
   return type(value) == 'table' and serializeTable(value, nil, pretty)
     or serializeValue(value)
 end
 
-function utils.indent(depth)
+function Utils.indent(depth)
   return string.rep(' ', depth * 2)
 end
 
-function utils.maskCurlyBraces(text)
+function Utils.maskCurlyBraces(text)
   text = text:gsub('{', '#<#')
   text = text:gsub('}', '#>#')
   return text
 end
 
-function utils.pluralize(count, noun, suffix)
+function Utils.pluralize(count, noun, suffix)
   suffix = suffix or 's'
   return noun .. (count > 1 and suffix or '')
 end
 
 ---@type fun(fn: function, ...: any)
-function utils.callIfExists(fn, ...)
+function Utils.callIfExists(fn, ...)
   if fn then return fn(...) end
 end
 
-function utils.mapValue(value, inMin, inMax, outMin, outMax)
+function Utils.mapValue(value, inMin, inMax, outMin, outMax)
   return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
 end
 
-function utils.getUsedMemory()
+function Utils.getUsedMemory()
   collectgarbage('collect')
   return collectgarbage('count')
 end
 
-function utils.capitalize(str)
+function Utils.capitalize(str)
   return str:sub(1, 1):upper() .. str:sub(2)
 end
 
-function utils.dryWetGain(dryWet)
+function Utils.dryWetGain(dryWet)
   if dryWet == 0.5 then
     return 1, 1
   elseif dryWet < 0.5 then
@@ -111,7 +112,7 @@ function utils.dryWetGain(dryWet)
   end
 end
 
-function utils.copyTable(t)
+function Utils.copyTable(t)
   local copy = {}
   for k, v in pairs(t) do
     copy[k] = v
@@ -119,8 +120,30 @@ function utils.copyTable(t)
   return copy
 end
 
-function utils.asTable(value)
+function Utils.asTable(value)
   return type(value) == 'table' and value or { value }
 end
 
-return utils
+function Utils.throttle(fn, interval)
+  local lastTime = 0
+
+  return function(...)
+    local args = { ... }
+    local now = Timer.micros()
+
+    local function next()
+      lastTime = now
+      fn(unpack(args))
+    end
+
+    if lastTime and now < lastTime + interval then
+      Timer.cancel(next)
+      Timer.schedule(next, now + interval)
+    else
+      lastTime = now
+      next()
+    end
+  end
+end
+
+return Utils

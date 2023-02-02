@@ -1,5 +1,5 @@
 local class = require('class')
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class Component : Class
 ---@field __events { [string]: function }
@@ -20,7 +20,7 @@ function Component:event(name, callback)
 end
 
 function Component:callEvent(name, ...)
-  utils.callIfExists(self.__events[name], self, ...)
+  Utils.callIfExists(self.__events[name], self, ...)
 end
 
 function Component:emit(name, ...)
@@ -40,14 +40,14 @@ function Component:constructor(props, ctx)
 end
 
 function Component:__mount()
-  utils.callIfExists(self.setup, self)
+  Utils.callIfExists(self.setup, self)
 
-  self.children = utils.callIfExists(self.render, self) or {}
+  self.children = Utils.callIfExists(self.render, self) or {}
   for name, child in pairs(self.children) do
     self:addChild(name, child)
   end
 
-  utils.callIfExists(self.mount, self)
+  Utils.callIfExists(self.mount, self)
 end
 
 function Component:addChild(name, child)
@@ -67,7 +67,7 @@ function Component:__unmount()
   for _, child in pairs(self.children) do
     self:removeChild(child)
   end
-  utils.callIfExists(self.unmount, self)
+  Utils.callIfExists(self.unmount, self)
 end
 
 return Component

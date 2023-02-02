@@ -42,7 +42,7 @@ Chord:event('input[1]:noteOff', function(self, note)
   end
 
   for _, id in ipairs(chord) do
-    local note, channel = Midi.parseNoteId(id)
+    local note, channel = Midi:parseNoteId(id)
     self:output(1, Midi.NoteOff(note, 0, channel))
   end
 end)

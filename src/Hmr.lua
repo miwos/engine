@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 Hmr = _G.Hmr or {}
 
 ---@type fun(modulePath: string): boolean
@@ -8,7 +8,7 @@ function Hmr.update(modulePath)
 
   local oldModule = _LOADED[moduleName]
   if type(oldModule) == 'table' then
-    utils.callIfExists(oldModule.__hmrDispose)
+    Utils.callIfExists(oldModule.__hmrDispose)
   end
 
   -- Remove the the module from the cache so the new version gets required.
@@ -20,7 +20,7 @@ function Hmr.update(modulePath)
     type(newModule) == 'table' and type(newModule.__hmrAccept) == 'function'
   then
     local shouldDecline = type(oldModule) == 'table'
-      and utils.callIfExists(oldModule.__hmrDecline, newModule)
+      and Utils.callIfExists(oldModule.__hmrDecline, newModule)
 
     if not shouldDecline then
       newModule.__hmrAccept(newModule)

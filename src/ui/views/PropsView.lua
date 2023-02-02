@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 local PropsView = Miwos.defineComponent('PropsView')
 local Buttons = require('ui.components.Buttons')
 local Leds = require('ui.components.Leds')
@@ -54,7 +54,7 @@ function PropsView:renderPage()
       local Component, props = unpack(module.__definition.props[propName])
 
       props.value = propValue
-      props.label = utils.capitalize(propName)
+      props.label = Utils.capitalize(propName)
 
       local component = Component(props, { slot = slot })
       component.__propName = propName

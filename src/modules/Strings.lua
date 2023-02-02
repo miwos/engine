@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 ---@class ModuleStrings : Module
 local Strings = Miwos.defineModule('Strings', {
   shape = 'Chord',
@@ -43,7 +43,7 @@ function Strings:schedule()
   self.scheduleTimer = Timer.delay(function()
     local ticks = Timer.ticks()
     while self.nextNoteTime < ticks + self.scheduleAheadTime do
-      local strings = utils.asTable(self.pattern[self.currentStep])
+      local strings = Utils.asTable(self.pattern[self.currentStep])
 
       for _, string in ipairs(strings) do
         local fret = (self.chord and self.chord[string]) or 0
@@ -138,7 +138,7 @@ function Strings:buildFrettedChords(
   for string, fret in pairs(notePositions[index]) do
     -- On a stringed instrument we can only pick one note per string.
     if currentChord[string] == nil then
-      local chordCopy = utils.copyTable(currentChord)
+      local chordCopy = Utils.copyTable(currentChord)
       chordCopy[string] = fret
       self:buildFrettedChords(notePositions, index + 1, chordCopy, allChords)
     end

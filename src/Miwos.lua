@@ -4,7 +4,7 @@ local Patch = require('Patch')
 local EventEmitter = require('EventEmitter')
 local Component = require('Component')
 local mixin = require('mixin')
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class Miwos : EventEmitter
 ---@field patch Patch | nil
@@ -13,6 +13,7 @@ Miwos = _G.Miwos or {}
 mixin(Miwos, EventEmitter)
 Miwos.__events = {}
 Miwos.moduleDefinitions = {}
+Miwos.activeOutputs = {}
 
 ---@alias Signal 'midi' | 'trigger'
 ---@class ModuleOptions
@@ -56,7 +57,7 @@ function Miwos.loadProject(name, updateApp)
   Miwos.patch:deserialize(data)
   Miwos:emit('patch:change', Miwos.patch)
 
-  if utils.option(updateApp, true) then
+  if Utils.option(updateApp, true) then
     Bridge.notify('/e/project/open', name)
   end
 end
@@ -69,6 +70,10 @@ end
 
 function Miwos.saveSettings()
   local file = 'lua/settings.lua'
-  local content = 'return ' .. utils.serialize(Miwos.settings, true)
+  local content = 'return ' .. Utils.serialize(Miwos.settings, true)
   local result = FileSystem.writeFile(file, content)
+end
+
+function Miwos.sendActiveOutputs()
+  Bridge.notify('/modules/outputs')
 end

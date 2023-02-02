@@ -1,6 +1,6 @@
 local Display = require('ui.components.Display')
 local Encoder = require('ui.components.Encoder')
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class ListProps
 ---@field values string
@@ -46,7 +46,7 @@ end
 
 List:event('encoder:change', function(self, rawValue)
   local index = math.floor(
-    utils.mapValue(rawValue, 0, self.encoderMax, 1, #self.props.values)
+    Utils.mapValue(rawValue, 0, self.encoderMax, 1, #self.props.values)
   )
   if index == self.index then return end
 

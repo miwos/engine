@@ -2,7 +2,7 @@ local ProgressBar = require('ui.components.ProgressBar')
 local LabelValue = require('ui.components.LabelValue')
 local Encoder = require('ui.components.Encoder')
 local Display = require('ui.components.Display')
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class NumberProps
 ---@field value number
@@ -42,7 +42,7 @@ function Number:render()
       y = Display.height - 7,
       width = Display.width,
       height = 7,
-      value = utils.mapValue(props.value, props.min, props.max, 0, 1),
+      value = Utils.mapValue(props.value, props.min, props.max, 0, 1),
       showScale = props.showScale,
       scaleStep = scaleStep,
     }),
@@ -70,7 +70,7 @@ Number:event('encoder:change', function(self, rawValue)
 
   local value = self:decodeValue(rawValue)
   self.children.labelValue:setProp('value', value)
-  local normalizedValue = utils.mapValue(value, props.min, props.max, 0, 1)
+  local normalizedValue = Utils.mapValue(value, props.min, props.max, 0, 1)
   self.children.progressBar:setProp('value', normalizedValue)
 
   local oldValue = props.value
@@ -85,19 +85,19 @@ Number:event('prop[value]:change', function(self, value)
 
   self.children.progressBar:setProp(
     'value',
-    utils.mapValue(props.value, props.min, props.max, 0, 1)
+    Utils.mapValue(props.value, props.min, props.max, 0, 1)
   )
 end)
 
 function Number:encodeValue(value)
   local props = self.props
-  return utils.mapValue(value, props.min, props.max, 0, self.encoderMax)
+  return Utils.mapValue(value, props.min, props.max, 0, self.encoderMax)
 end
 
 function Number:decodeValue(rawValue)
   local props = self.props
   local scaledValue =
-    utils.mapValue(rawValue, 0, self.encoderMax, props.min, props.max)
+    Utils.mapValue(rawValue, 0, self.encoderMax, props.min, props.max)
 
   return props.step and math.ceil(scaledValue / props.step) * props.step
     or scaledValue

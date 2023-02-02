@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 
 Testing = {
   fn = require('Testing.mock'),
@@ -21,7 +21,7 @@ end
 ---@type fun(text: string, n?: number)
 function Testing.print(text, n)
   n = n or 0
-  print(utils.indent(Testing._depth + n) .. text)
+  print(Utils.indent(Testing._depth + n) .. text)
 end
 
 function Testing.serialize(...)
@@ -29,9 +29,9 @@ function Testing.serialize(...)
   if #args == 1 then
     local value = args[1]
     if type(value) == 'table' and type(value.serialize) == 'function' then
-      return utils.maskCurlyBraces(value:serialize())
+      return Utils.maskCurlyBraces(value:serialize())
     else
-      return utils.maskCurlyBraces(utils.serialize(value, true))
+      return Utils.maskCurlyBraces(Utils.serialize(value, true))
     end
   else
     local parts = {}

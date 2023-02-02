@@ -2,11 +2,10 @@ local class = require('class')
 local EventEmitter = require('EventEmitter')
 local MidiMessage = require('MidiMessage')
 local mixin = require('mixin')
+local Utils = require('Utils')
 
 ---@class Midi : EventEmitter
 ---@field private __send fun(index: number, type: number, data1: number, data2: number, channel: number, cable: number)
----@field private __getNoteId fun(note: number, channel: number)
----@field parseNoteId fun(noteId: number): note: number, channel: number
 ---@field start fun()
 ---@field stop fun()
 ---@field setTempo fun(bpm: number)
@@ -61,7 +60,14 @@ function Midi:send(index, message, cable)
   self.__send(index, message.type, data1, data2, message.channel, cable)
 end
 
----@type fun(self, note: MidiNoteOn | MidiNoteOff)
+---@param note MidiNoteOn | MidiNoteOff
+---@return number
 function Midi:getNoteId(note)
-  return Midi.__getNoteId(note.note, note.channel)
+  return Utils.packBytes(note.note, note.channel)
+end
+
+---@param id number
+---@return number, number
+function Midi:parseNoteId(id)
+  return Utils.unpackBytes(id)
 end

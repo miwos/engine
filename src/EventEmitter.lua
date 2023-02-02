@@ -1,4 +1,4 @@
-local utils = require('utils')
+local Utils = require('Utils')
 
 ---@class EventEmitter
 ---@field __events table
@@ -38,7 +38,7 @@ function EventEmitter:emit(event, ...)
     for i = 1, #handlers do
       -- An event handler might alter the handlers list by calling `off()` so
       -- we have to assume that the handler might be nil.
-      utils.callIfExists(handlers[i], ...)
+      Utils.callIfExists(handlers[i], ...)
     end
   end
 end

@@ -8,7 +8,7 @@ require('Midi')
 require('Miwos')
 require('Prop')
 require('Timer')
-local utils = require('utils')
+local Utils = require('Utils')
 
 require('modules.Input')
 require('modules.Output')
@@ -52,13 +52,13 @@ Bridge.addMethod('/e/modules/definitions', function()
     local module = cachedModule or loadfile('lua/modules' .. '/' .. baseName)()
     definitions[#definitions + 1] = module:serializeDefinition()
   end
-  return utils.serialize(definitions)
+  return Utils.serialize(definitions)
 end)
 
 Bridge.addMethod('/e/modules/definition', function(name)
   local cachedModule = _LOADED['modules.' .. name]
   local module = cachedModule or loadfile('lua/modules' .. '/' .. name)()
-  return utils.serialize(module:serializeDefinition())
+  return Utils.serialize(module:serializeDefinition())
 end)
 
 Bridge.addMethod('/e/modules/prop', function(moduleId, name, value)
@@ -103,6 +103,7 @@ Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
 
 -- Midi.start()
-Log.dump(1, 2, 3)
+-- Utils.packBytes(60, 127)
+Log.dump(utils)
 
--- Log.info(utils.getUsedMemory())
+-- Log.info(Utils.getUsedMemory())
