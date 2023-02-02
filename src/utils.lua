@@ -111,4 +111,16 @@ function utils.dryWetGain(dryWet)
   end
 end
 
+function utils.copyTable(t)
+  local copy = {}
+  for k, v in pairs(t) do
+    copy[k] = v
+  end
+  return copy
+end
+
+function utils.asTable(value)
+  return type(value) == 'table' and value or { value }
+end
+
 return utils

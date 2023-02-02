@@ -14,6 +14,7 @@ require('modules.Input')
 require('modules.Output')
 require('modules.Chord')
 require('modules.Delay')
+require('modules.Strings')
 
 local PropsView = require('ui.views.PropsView')
 local MenuView = require('ui.views.MenuView')
@@ -100,5 +101,8 @@ end)
 Miwos.loadSettings()
 Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
+
+-- Midi.start()
+Log.dump(1, 2, 3)
 
 -- Log.info(utils.getUsedMemory())
