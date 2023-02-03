@@ -74,6 +74,17 @@ function Miwos.saveSettings()
   local result = FileSystem.writeFile(file, content)
 end
 
-function Miwos.sendActiveOutputs()
-  Bridge.notify('/modules/outputs')
-end
+Miwos.sendActiveOutputs = Utils.throttle(function()
+  local list = {}
+  for activeOutput, isSustained in pairs(Miwos.activeOutputs) do
+    -- `activeOutput` is packed with 2 bytes (moduleId and outputIndex). Since
+    -- we also have to send wether or not the output is sustained, we use the
+    -- MSB of the index as a flag. The drawbag is that the index can now only be
+    -- in ther range of 1-127, which should be more than enough.
+    list[#list + 1] = Utils.setBit(activeOutput, 16, isSustained)
+
+    -- Reset non-sustained ouputs as soon es they are send.
+    if not isSustained then Miwos.activeOutputs[activeOutput] = nil end
+  end
+  Bridge.notify('/e/modules/active-outputs', unpack(list))
+end, 50 * 1000)

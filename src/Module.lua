@@ -3,6 +3,7 @@ local Utils = require('Utils')
 
 ---@class Module : Class
 ---@field __type string
+---@field __id number set in `Patch:addModule()`
 ---@field __definition table
 ---@field __events table<string, function>
 ---@field setup function | nil
@@ -74,12 +75,26 @@ function Module:output(index, message, cable)
 
   if isNoteOn or isNoteOff then
     ---@cast message MidiNoteOn | MidiNoteOff
-    local noteId = Midi:getNoteId(message)
-    self.__activeNotes[index] = self.__activeNotes[index] or {}
-    self.__activeNotes[index][noteId] = isNoteOn and true or nil
+    local activeNoteKey = Utils.packBytes(index, message.note, message.channel)
+    self.__activeNotes[activeNoteKey] = isNoteOn and true or nil
   end
 
+  -- We distinguish between two types of active outputs:
+  -- 1. a simple midi message or trigger: it will be added to
+  --    `Miwos.activeOutputs` and removed automatically as soon as the app has
+  --    has been notified.
+  -- 2. a sustained output (a midi note): it will also be added to
+  --    `Miwos.activeOutputs` but not removed automatically, we will remove it
+  --     manually as soon as we receive the corresponding note off message.
+  local isSustained = isNoteOn
+  local activeOutputKey = Utils.packBytes(self.__id, index)
+  if isNoteOff then
+    Miwos.activeOutputs[activeOutputKey] = nil
+  else
+    Miwos.activeOutputs[activeOutputKey] = isSustained
+  end
   self:__output(index, message)
+  Miwos.sendActiveOutputs()
 end
 
 function Module:__output(index, message)
@@ -102,12 +117,10 @@ end
 
 ---@param output? number
 function Module:__finishNotes(output)
-  for index, noteIds in pairs(self.__activeNotes) do
+  for activeNote in pairs(self.__activeNotes) do
+    local index, note, channel = Utils.unpackBytes(activeNote)
     if not output or index == output then
-      for noteId in pairs(noteIds) do
-        local note, channel = Midi:parseNoteId(noteId)
-        self:__output(index, Midi.NoteOff(note, 0, channel))
-      end
+      self:__output(index, Midi.NoteOff(note, 0, channel))
     end
   end
 end
