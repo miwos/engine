@@ -1,4 +1,8 @@
 ---@diagnostic disable: undefined-field
+---@class Utils
+---@field packBytes fun(byte1: number, byte2: number, byte3?: number, byte4?: number): number
+---@field unpackBytes fun(packed: number): number, number, number, number
+---@field setBit fun(number: number, bitIndex: number, value: boolean)
 local Utils = _G.Utils or {}
 
 function Utils.option(value, default)

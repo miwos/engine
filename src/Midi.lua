@@ -69,5 +69,6 @@ end
 ---@param id number
 ---@return number, number
 function Midi:parseNoteId(id)
-  return Utils.unpackBytes(id)
+  local note, channel = Utils.unpackBytes(id)
+  return note, channel
 end
