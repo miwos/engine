@@ -26,7 +26,7 @@ end
 
 function Timer.schedule(callbackOrMessage, ...)
   if type(callbackOrMessage) == 'function' then
-    return Timer.schedule(callbackOrMessage, ...)
+    return Timer.scheduleCallback(callbackOrMessage, ...)
   else
     return Timer.scheduleMidi(callbackOrMessage, ...)
   end
