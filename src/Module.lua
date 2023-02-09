@@ -123,6 +123,7 @@ function Module:__finishNotes(output)
       self:__output(index, Midi.NoteOff(note, 0, channel))
     end
   end
+  self.__activeNotes = {}
 end
 
 function Module:__saveState()

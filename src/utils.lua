@@ -128,6 +128,14 @@ function Utils.asTable(value)
   return type(value) == 'table' and value or { value }
 end
 
+function Utils.getTableLength(t)
+  local count = 0
+  for _ in pairs(t) do
+    count = count + 1
+  end
+  return count
+end
+
 function Utils.throttle(fn, interval)
   local lastTime = 0
 
