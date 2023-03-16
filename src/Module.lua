@@ -32,6 +32,7 @@ function Module:serializeDefinition()
     inputs = self.__definition.inputs,
     outputs = self.__definition.outputs,
     shape = self.__definition.shape,
+    label = self.__definition.label,
     props = props,
   }
 end

@@ -1,6 +1,7 @@
 ---@class ModuleInput : Module
 local Input = Miwos.defineModule('Input', {
   outputs = { 'midi' },
+  label = false,
   props = {
     device = Prop.Number({
       listed = false,
