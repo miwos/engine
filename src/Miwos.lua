@@ -57,7 +57,7 @@ function Miwos.switchView(view)
 end
 
 ---@param name string
----@param updateApp boolean
+---@param updateApp? boolean
 function Miwos.loadProject(name, updateApp)
   local data = loadfile('lua/projects/' .. name .. '/part-1.lua')()
   Miwos.patch = Patch()
