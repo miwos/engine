@@ -33,6 +33,7 @@ function Module:serializeDefinition()
     outputs = self.__definition.outputs,
     shape = self.__definition.shape,
     label = self.__definition.label,
+    clipContent = self.__definition.clipContent,
     props = props,
   }
 end
