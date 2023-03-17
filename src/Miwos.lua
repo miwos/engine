@@ -16,11 +16,13 @@ Miwos.moduleDefinitions = {}
 Miwos.activeOutputs = {}
 
 ---@alias Signal 'midi' | 'trigger'
----@class ModuleOptions
+---@class ModuleDefinition
 ---@field inputs Signal[]
 ---@field outputs Signal[]
 
----@type fun(name: string, options: ModuleOptions): Module
+---@param name string
+---@param definition any
+---@return Module
 function Miwos.defineModule(name, definition)
   local module = class(Module) --[=[@as Module]=]
   module.__type = name
@@ -31,11 +33,14 @@ function Miwos.defineModule(name, definition)
   return module
 end
 
+---@param name string
+---@param component Component
 function Miwos.defineProp(name, component)
   Prop.list[name] = component
 end
 
----@type fun(type: string): Component
+---@param type string
+---@return Component
 function Miwos.defineComponent(type)
   local component = class(Component) --[=[@as Component]=]
   component.__type = type
@@ -43,7 +48,7 @@ function Miwos.defineComponent(type)
   return component
 end
 
----@type fun(view: Component)
+---@param view Component
 function Miwos.switchView(view)
   local prevView = Miwos.view
   if prevView then prevView:__unmount() end
@@ -51,6 +56,8 @@ function Miwos.switchView(view)
   Miwos.view = view
 end
 
+---@param name string
+---@param updateApp boolean
 function Miwos.loadProject(name, updateApp)
   local data = loadfile('lua/projects/' .. name .. '/part-1.lua')()
   Miwos.patch = Patch()

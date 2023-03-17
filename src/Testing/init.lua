@@ -13,12 +13,13 @@ function Testing.reset()
   Testing._tests = { total = 0, failed = 0 }
 end
 
----@type fun(n: number)
+---@param n number
 function Testing.depth(n)
   Testing._depth = Testing._depth + n
 end
 
----@type fun(text: string, n?: number)
+---@param text string
+---@param n? number
 function Testing.print(text, n)
   n = n or 0
   print(Utils.indent(Testing._depth + n) .. text)
@@ -60,7 +61,7 @@ function Testing.runFile(fileName)
   return Testing._currentFile.hasFailed
 end
 
----@type fun(dirName: string)
+---@param dirName string
 function Testing.runDir(dirName)
   Testing.reset()
   local files = FileSystem.listFiles(dirName)
@@ -69,7 +70,8 @@ function Testing.runDir(dirName)
   end
 end
 
----@type fun(name: string, fn: function)
+---@param name string
+---@param fn function
 function Testing.describe(name, fn)
   Testing._currentSuite = { name = name, hasFailed = false }
   Testing._suites.total = Testing._suites.total + 1
@@ -79,7 +81,8 @@ function Testing.describe(name, fn)
   Testing.depth(-1)
 end
 
----@type fun(name: string, fn: function)
+---@param name string
+---@param fn function
 function Testing.test(name, fn)
   Testing._currentTest = { name = name, hasFailed = false }
   Testing._tests.total = Testing._tests.total + 1

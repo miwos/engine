@@ -8,7 +8,9 @@ Bridge.__methods = {}
 Bridge.__events = {}
 mixin(Bridge, EventEmitter)
 
----@type fun(address: string, ...: any): unknown
+---@param address any
+---@param ... any
+---@return unknown
 function Bridge.handleOsc(address, ...)
   -- First call the method, then emit events.
   local method = Bridge.__methods[address]
@@ -18,7 +20,8 @@ function Bridge.handleOsc(address, ...)
   return result
 end
 
----@type fun(name: string, handler: function)
+---@param name string
+---@param handler function
 function Bridge.addMethod(name, handler)
   if Bridge.__methods[name] then
     Log.warn(string.format('Bridge method `%s` already exists', name))

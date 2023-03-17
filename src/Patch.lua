@@ -10,7 +10,10 @@ function Patch:constructor()
   self.mappings = {}
 end
 
----@type fun(self, id: number, type: string, props?: table): boolean
+---@param id number
+---@param type string
+---@param props table
+---@return boolean
 function Patch:addModule(id, type, props)
   local Module = Miwos.moduleDefinitions[type]
   if not Module then
@@ -30,7 +33,7 @@ function Patch:addModule(id, type, props)
   return true
 end
 
----@type fun(self, moduleId: number)
+---@param moduleId number
 function Patch:removeModule(moduleId)
   local module = self.modules[moduleId]
   module:__destroy()

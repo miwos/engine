@@ -10,7 +10,8 @@ local LogType = {
   Dump = 4,
 }
 
----@type fun(type: LogType, ...: any)
+---@param type LogType
+---@param ... unknown
 function Log.log(type, ...)
   local args = { ... }
   local message = ''
@@ -46,12 +47,12 @@ end
 
 local timers = {}
 
----@type fun(label: string)
+---@param label string
 function Log.time(label)
   timers[label] = Timer.micros()
 end
 
----@type fun(label: string)
+---@param label string
 function Log.timeEnd(label)
   Log.info(label .. ': ' .. Timer.micros() - timers[label] .. 'μs')
   timers[label] = nil

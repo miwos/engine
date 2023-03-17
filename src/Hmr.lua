@@ -1,7 +1,8 @@
 local Utils = require('Utils')
 Hmr = _G.Hmr or {}
 
----@type fun(modulePath: string): boolean
+---@param modulePath string
+---@return boolean
 function Hmr.update(modulePath)
   -- Get the module name (without the lua root folder).
   local moduleName = string.sub(string.gsub(modulePath, '%/', '.'), 5, -5)

@@ -4,14 +4,17 @@ local Utils = require('Utils')
 ---@field __events table
 EventEmitter = {}
 
----@type fun(self, event: string, callback: function): function
+---@param event string
+---@param callback function
+---@return function callback
 function EventEmitter:on(event, callback)
   self.__events[event] = self.__events[event] or {}
   table.insert(self.__events[event], callback)
   return callback
 end
 
----@type fun(self, event: string, callback: function)
+---@param event string
+---@param callback function
 function EventEmitter:off(event, callback)
   local handlers = self.__events[event]
 
@@ -22,7 +25,8 @@ function EventEmitter:off(event, callback)
   if #handlers == 0 then handlers[event] = nil end
 end
 
----@type fun(self, event: string, callback: function)
+---@param event string
+---@param callback function
 function EventEmitter:once(event, callback)
   local function handler()
     self:off(event, handler)
@@ -31,7 +35,8 @@ function EventEmitter:once(event, callback)
   self:on(event, handler)
 end
 
----@type fun(self, event: string, ...: unknown)
+---@param event string
+---@param ... unknown
 function EventEmitter:emit(event, ...)
   local handlers = self.__events[event]
   if handlers ~= nil then

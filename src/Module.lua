@@ -53,13 +53,17 @@ function Module:callEvent(name, ...)
   Utils.callIfExists(self.__events[name], self, ...)
 end
 
----@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
+---@param outputIndex number
+---@param moduleId number
+---@param inputIndex number
 function Module:__connect(outputIndex, moduleId, inputIndex)
   self.__outputs[outputIndex] = self.__outputs[outputIndex] or {}
   table.insert(self.__outputs[outputIndex], { moduleId, inputIndex })
 end
 
----@type fun(self, outputIndex: number, moduleId: number, inputIndex: number)
+---@param outputIndex number
+---@param moduleId number
+---@param inputIndex number
 function Module:__disconnect(outputIndex, moduleId, inputIndex)
   for index, connection in pairs(self.__outputs[outputIndex] or {}) do
     if connection[0] == moduleId and connection[1] == inputIndex then
@@ -69,7 +73,9 @@ function Module:__disconnect(outputIndex, moduleId, inputIndex)
   end
 end
 
----@type fun(self, index: number, message: MidiMessage|nil, cable: number )
+---@param index number
+---@param message MidiMessage|nil
+---@param cable number
 function Module:output(index, message, cable)
   local signal = message and 'midi' or 'trigger'
   local isNoteOn = message and message:is(Midi.NoteOn)

@@ -9,7 +9,9 @@ local class = require('class')
 ---this would be: 'note', 'velocity')
 local MidiMessage = class()
 
----@type fun(self, data1: number, data2: number, channel: number)
+---@param data1 number
+---@param data2 number
+---@param channel number
 function MidiMessage:constructor(data1, data2, channel)
   self[self.keys[1]] = data1
   self[self.keys[2]] = data2

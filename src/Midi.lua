@@ -41,7 +41,12 @@ Midi.NoteOff = defineMidiMessage(0x80, 'noteOff', { 'note', 'velocity' })
 Midi.ControlChange =
   defineMidiMessage(0xB0, 'controlChange', { 'controler', 'value' })
 
----@type fun(index: number, type: number, data1: number, data2: number, channel: number, cable: number)
+---@param index number
+---@param type number
+---@param data1 number
+---@param data2 number
+---@param channel number
+---@param cable number
 function Midi.handleInput(index, type, data1, data2, channel, cable)
   local Message = messageDict[type]
   if Message == nil then return end
@@ -54,7 +59,9 @@ function Midi.handleClock(tick)
   -- Midi:send(1, Midi.NoteOn(62, 127, 1), 1)
 end
 
----@type fun(self, index: number, message: MidiMessage, cable: number)
+---@param index number
+---@param message MidiMessage
+---@param cable number
 function Midi:send(index, message, cable)
   local data1, data2 = message:data()
   self.__send(index, message.type, data1, data2, message.channel, cable)

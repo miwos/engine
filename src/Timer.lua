@@ -8,7 +8,7 @@ Timer.Sec = 1000000
 Timer.Milli = 1000
 local events = {}
 
----@type fun(now: number)
+---@param now number
 function Timer.update(now)
   local finishedCallbacks = {}
 
@@ -51,13 +51,15 @@ function Timer.scheduleMidi(message, device, cable, time, useTicks)
   )
 end
 
----@type fun(callback: function, delay: number): function
+---@param callback function
+---@param delay number
+---@return function callback
 function Timer.delay(callback, delay)
   events[callback] = Timer.micros() + delay
   return callback
 end
 
----@type fun(callback: function)
+---@param callback function
 function Timer.cancel(callback)
   if callback then events[callback] = nil end
 end

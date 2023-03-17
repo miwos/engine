@@ -32,7 +32,7 @@ Output:event('input[1]', function(self, message)
 end)
 
 ---Override `Module.__output()` to send the message directly via midi.
----@type fun(self, _, message: MidiMessage)
+---@param message MidiMessage
 function Output:__output(_, message)
   Midi:send(self.props.device, message, 1)
 end
