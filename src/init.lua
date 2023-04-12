@@ -17,6 +17,8 @@ require('modules.Delay')
 require('modules.Strings')
 require('modules.ChordSplit')
 
+require('modulators.Lfo')
+
 local PropsView = require('ui.views.PropsView')
 local MenuView = require('ui.views.MenuView')
 

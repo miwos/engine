@@ -157,4 +157,11 @@ function Utils.throttle(fn, interval)
   end
 end
 
+function Utils.getPropsWithDefaults(propDefinitions, props)
+  for key, definition in pairs(propDefinitions or {}) do
+    if props[key] == nil then props[key] = definition[2].value end
+  end
+  return props
+end
+
 return Utils

@@ -15,7 +15,7 @@ function Module:constructor(props)
   self.__inputs = {}
   self.__outputs = {}
   self.__activeNotes = {}
-  self.props = self:getPropsWithDefaults(props or {})
+  self.props = Utils.getPropsWithDefaults(self.__definition.props, props or {})
 
   Utils.callIfExists(self.setup, self)
 end
@@ -36,13 +36,6 @@ function Module:serializeDefinition()
     clipContent = self.__definition.clipContent,
     props = props,
   }
-end
-
-function Module:getPropsWithDefaults(props)
-  for key, definition in pairs(self.__definition.props or {}) do
-    if props[key] == nil then props[key] = definition[2].value end
-  end
-  return props
 end
 
 function Module:event(name, handler)
@@ -167,10 +160,11 @@ function Module.__hmrAccept(definition)
 end
 
 function Module.__hmrDecline(definition)
+  return true
   -- We only want to hot replace actual modules, not the (abstract) module base
   -- class itself. Only modules registered with `Miwos.defineModule()` have a
   -- `__type`.
-  return not definition.__type
+  -- return not definition.__type
 end
 
 return Module

@@ -7,6 +7,7 @@ Timer = _G.Timer or {}
 Timer.Sec = 1000000
 Timer.Milli = 1000
 local events = {}
+local lastModulationUpdate = 0
 
 ---@param now number
 function Timer.update(now)
@@ -21,6 +22,11 @@ function Timer.update(now)
 
   for _, callback in ipairs(finishedCallbacks) do
     callback()
+  end
+
+  if (now - lastModulationUpdate) > (Timer.Sec / 1) then
+    Miwos.patch:updateModulations(now)
+    lastModulationUpdate = now
   end
 end
 

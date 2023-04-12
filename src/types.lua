@@ -1,0 +1,3 @@
+---@class PropDefinition
+---@field component Component
+---@field modulateValue fun(value: number, modulation: number, amount: number, options: table)

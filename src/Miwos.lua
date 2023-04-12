@@ -1,5 +1,6 @@
 local class = require('class')
 local Module = require('Module')
+local Modulator = require('Modulator')
 local Patch = require('Patch')
 local EventEmitter = require('EventEmitter')
 local Component = require('Component')
@@ -13,6 +14,11 @@ Miwos = _G.Miwos or {}
 mixin(Miwos, EventEmitter)
 Miwos.__events = {}
 Miwos.moduleDefinitions = {}
+Miwos.modulatorDefinitions = {}
+
+---@type table<string, PropDefinition>
+Miwos.propDefinitions = {}
+
 Miwos.activeOutputs = {}
 
 ---@alias Signal 'midi' | 'trigger'
@@ -33,10 +39,18 @@ function Miwos.defineModule(name, definition)
   return module
 end
 
+function Miwos.defineModulator(name, definition)
+  local modulator = class(Modulator) --[=[@as Modulator]=]
+  modulator.__definition = definition
+  Miwos.modulatorDefinitions[name] = modulator
+  _G.__propIndex = nil
+  return modulator
+end
+
 ---@param name string
----@param component Component
-function Miwos.defineProp(name, component)
-  Prop.list[name] = component
+---@param definition PropDefinition
+function Miwos.defineProp(name, definition)
+  Miwos.propDefinitions[name] = definition
 end
 
 ---@param type string

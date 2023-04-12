@@ -2,11 +2,14 @@ local class = require('class')
 
 ---@class Patch: Class
 ---@field modules table<number, Module>
+---@field modulators table<number, Modulator>
 local Patch = class()
 
 function Patch:constructor()
   self.modules = {}
+  self.modulators = {}
   self.connections = {}
+  self.modulations = {}
   self.mappings = {}
 end
 
@@ -20,8 +23,10 @@ function Patch:addModule(id, type, props)
     error(string.format('module type `%s` not found', type))
   end
 
-  if self.modules[id] then
-    Log.warn(string.format('module with id `%s` already exists', id))
+  if self.modules[id] or self.modulators[id] then
+    Log.warn(
+      string.format('module or modulator with id `%s` already exists', id)
+    )
     return false
   end
 
@@ -29,6 +34,31 @@ function Patch:addModule(id, type, props)
   module.__id = id
   module.__name = type .. '@' .. id
   self.modules[id] = module
+
+  return true
+end
+
+---@param id number
+---@param type string
+---@param props table
+---@return boolean
+function Patch:addModulator(id, type, props)
+  local Modulator = Miwos.modulatorDefinitions[type]
+  if not Modulator then
+    error(string.format('modulator type `%s` not found', type))
+  end
+
+  if self.modulators[id] or self.modules[id] then
+    Log.warn(
+      string.format('module or modulator with id `%s` already exists', id)
+    )
+    return false
+  end
+
+  local modulator = Modulator(props)
+  modulator.__id = id
+  modulator.__name = type .. '@' .. id
+  self.modulators[id] = modulator
 
   return true
 end
@@ -81,6 +111,30 @@ function Patch:updateProp(moduleId, name, value)
   module:callEvent('prop[' .. name .. ']:change', value)
 end
 
+---@param time number
+function Patch:updateModulations(time)
+  for _, modulation in pairs(self.modulations) do
+    local modulatorId, moduleId, prop, amount = unpack(modulation)
+    local modulator = self.modulators[modulatorId]
+    local module = self.modules[moduleId]
+
+    local component, options = unpack(module.__definition.props[prop])
+    local definition = Miwos.propDefinitions[component.__type]
+
+    if modulator then
+      local oldValue = module.props[prop]
+      local modulationValue = modulator:value(time)
+      local value =
+        definition.modulateValue(oldValue, modulationValue, 1, options)
+      self:updateProp(moduleId, prop, value)
+      Miwos:emit('prop:change', moduleId, prop, value)
+      Bridge.notify('/e/modules/prop', moduleId, prop, value)
+    else
+      Log.warn(string.format('modulator with id `%s` not found', moduleId))
+    end
+  end
+end
+
 function Patch:addMapping(page, slot, id, prop)
   self.mappings[page] = self.mappings[page] or {}
   local module = self.modules[id]
@@ -102,12 +156,22 @@ function Patch:deserialize(serialized)
     )
   end
 
-  -- TODO: what is `connections = {}` doing?
   self.connections = serialized.connections
   for _, connection in pairs(serialized.connections) do
     local fromId, fromIndex, toId, toIndex = unpack(connection)
     self.modules[fromId]:__connect(fromIndex, toId, toIndex)
   end
+
+  self.modulators = {}
+  for _, serializedModulator in pairs(serialized.modulators) do
+    self:addModulator(
+      serializedModulator.id,
+      serializedModulator.type,
+      serializedModulator.props
+    )
+  end
+
+  self.modulations = serialized.modulations
 
   self.mappings = serialized.mappings or {}
   for _, page in pairs(self.mappings) do

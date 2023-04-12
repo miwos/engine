@@ -4,7 +4,7 @@ return {
       id = 1,
       type = 'Input',
       props = {
-        device = 4,
+        device = 1,
         cable = 1,
       },
       position = {
@@ -24,14 +24,34 @@ return {
         465,
       },
     },
+    {
+      id = 3,
+      type = 'Delay',
+      props = {
+        feed = 30,
+        time = 100,
+      },
+      position = { 300, 300 },
+    },
   },
   connections = {
-    { 1, 1, 2, 1 },
+    { 1, 1, 3, 1 },
+    { 3, 1, 2, 1 },
+  },
+  modulators = {
+    {
+      id = 4,
+      type = 'Lfo',
+      props = { shape = 1, rate = 5 },
+    },
+  },
+  modulations = {
+    { 4, 3, 'time', 1 },
   },
   mappings = {
     [1] = {
-      [1] = { 1, 'device' },
-      [2] = { 2, 'device' },
+      [1] = { 3, 'feed' },
+      [2] = { 3, 'time' },
     },
   },
 }

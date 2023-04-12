@@ -1,12 +1,11 @@
 local Number = require('ui.components.Number')
+local Utils = require('utils')
 
----@class Prop
----@field list table<string, Component>
-Prop = { list = {} }
+Prop = {}
 
 setmetatable(Prop, {
   __index = function(_, name)
-    local component = Prop.list[name]
+    local component = Miwos.propDefinitions[name].component
     return function(options, ...)
       -- Lua objects don't have an order (which we need to diplay the props in
       -- the app). We could use an array instead, but it would be more verbose.
@@ -24,4 +23,9 @@ setmetatable(Prop, {
 
 ---@class Prop
 ---@field Number fun(props: NumberProps)
-Miwos.defineProp('Number', Number)
+Miwos.defineProp('Number', {
+  component = Number,
+  modulateValue = function(value, modulation, amount, options)
+    return Utils.mapValue(modulation, 0, 1, options.min, options.max)
+  end,
+})
