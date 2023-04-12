@@ -3,6 +3,8 @@ local class = require('class')
 ---@class Patch: Class
 ---@field modules table<number, Module>
 ---@field modulators table<number, Modulator>
+---@field modulations table[]
+---@field mappings table[]
 local Patch = class()
 
 function Patch:constructor()
@@ -18,8 +20,9 @@ end
 ---@param props table
 ---@return boolean
 function Patch:addModule(id, type, props)
-  local Module = Miwos.moduleDefinitions[type]
-  if not Module then
+  local definition = Miwos.moduleDefinitions[type]
+  local module = definition and definition.module
+  if not module then
     error(string.format('module type `%s` not found', type))
   end
 
@@ -30,10 +33,10 @@ function Patch:addModule(id, type, props)
     return false
   end
 
-  local module = Module(props)
-  module.__id = id
-  module.__name = type .. '@' .. id
-  self.modules[id] = module
+  local instance = module(props)
+  instance.__id = id
+  instance.__name = type .. '@' .. id
+  self.modules[id] = instance
 
   return true
 end
@@ -43,8 +46,10 @@ end
 ---@param props table
 ---@return boolean
 function Patch:addModulator(id, type, props)
-  local Modulator = Miwos.modulatorDefinitions[type]
-  if not Modulator then
+  local definition = Miwos.modulatorDefinitions[type]
+  local modulator = definition and definition.modulator
+
+  if not modulator then
     error(string.format('modulator type `%s` not found', type))
   end
 
@@ -55,10 +60,10 @@ function Patch:addModulator(id, type, props)
     return false
   end
 
-  local modulator = Modulator(props)
-  modulator.__id = id
-  modulator.__name = type .. '@' .. id
-  self.modulators[id] = modulator
+  local instance = modulator(props)
+  instance.__id = id
+  instance.__name = type .. '@' .. id
+  self.modulators[id] = instance
 
   return true
 end

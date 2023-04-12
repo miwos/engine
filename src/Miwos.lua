@@ -13,36 +13,41 @@ local Utils = require('Utils')
 Miwos = _G.Miwos or {}
 mixin(Miwos, EventEmitter)
 Miwos.__events = {}
+
+---@type table<string, ModuleDefinition>
 Miwos.moduleDefinitions = {}
-Miwos.modulatorDefinitions = {}
 
 ---@type table<string, PropDefinition>
 Miwos.propDefinitions = {}
 
+---@type table<string, ModulatorDefinition>
+Miwos.modulatorDefinitions = {}
+
+---@type table<number, boolean>
 Miwos.activeOutputs = {}
 
----@alias Signal 'midi' | 'trigger'
----@class ModuleDefinition
----@field inputs Signal[]
----@field outputs Signal[]
-
 ---@param name string
----@param definition any
+---@param definition ModuleDefinition
 ---@return Module
 function Miwos.defineModule(name, definition)
   local module = class(Module) --[=[@as Module]=]
   module.__type = name
   module.__events = {}
   module.__definition = definition
-  Miwos.moduleDefinitions[name] = module
+  definition.module = module
+  Miwos.moduleDefinitions[name] = definition
   _G.__propIndex = nil
   return module
 end
 
+---@param name string
+---@param definition ModulatorDefinition
+---@return Modulator
 function Miwos.defineModulator(name, definition)
   local modulator = class(Modulator) --[=[@as Modulator]=]
   modulator.__definition = definition
-  Miwos.modulatorDefinitions[name] = modulator
+  definition.modulator = modulator
+  Miwos.modulatorDefinitions[name] = definition
   _G.__propIndex = nil
   return modulator
 end

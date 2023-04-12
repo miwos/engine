@@ -4,7 +4,7 @@ local Utils = require('Utils')
 ---@class Module : Class
 ---@field __type string
 ---@field __id number set in `Patch:addModule()`
----@field __definition table
+---@field __definition ModuleDefinition
 ---@field __events table<string, function>
 ---@field setup function | nil
 ---@field destroy function | nil
