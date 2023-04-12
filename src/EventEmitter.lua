@@ -25,6 +25,7 @@ function EventEmitter:off(event, callback)
   if #handlers == 0 then handlers[event] = nil end
 end
 
+--TODO: remove as we don't seem to use it
 ---@param event string
 ---@param callback function
 function EventEmitter:once(event, callback)
