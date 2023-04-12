@@ -11,7 +11,6 @@ local Delay = Miwos.defineModule('Delay', {
 })
 
 function Delay:setup()
-  self.messages = {}
   self.timers = {}
   self.mono = true
 end
@@ -39,6 +38,10 @@ Delay:event('input[1]', function(self, message)
 
       if feed == 0 or gain < thresh then
         Timer.cancel(timer)
+        if isNoteOn then
+          ---@cast message MidiNoteOn
+          self.timers[Midi:getNoteId(message)] = nil
+        end
       else
         delay()
       end
@@ -66,8 +69,12 @@ function Delay:sendWithGain(message, gain)
 end
 
 function Delay:cleanUpNote(note)
-  local timer = self.timers[Midi:getNoteId(note)]
-  if timer then Timer.cancel(timer) end
+  local noteId = Midi:getNoteId(note)
+  local timer = self.timers[noteId]
+  if timer then
+    Timer.cancel(timer)
+    self.timers[noteId] = nil
+  end
   self:output(1, Midi.NoteOff(note.note, 0, note.channel), 1)
 end
 
