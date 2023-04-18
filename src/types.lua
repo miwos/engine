@@ -16,5 +16,6 @@
 ---@field component Component
 
 ---@class ModulatorDefinition
+---@field bipolar boolean
 ---@field props table<string, Prop>
 ---@field modulator Modulator
