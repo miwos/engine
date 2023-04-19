@@ -26,6 +26,8 @@ setmetatable(Prop, {
 Miwos.defineProp('Number', {
   component = Number,
   modulateValue = function(value, modulation, amount, options)
-    return Utils.mapValue(modulation, 0, 1, options.min, options.max)
+    local modulationRange = (options.max - options.min) * (amount / 2)
+    local newValue = value + modulationRange * modulation
+    return math.min(math.max(newValue, options.min), options.max)
   end,
 })
