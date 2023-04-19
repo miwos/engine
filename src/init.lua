@@ -65,7 +65,7 @@ Bridge.addMethod('/e/modules/definition', function(name)
 end)
 
 Bridge.addMethod('/e/modules/prop', function(moduleId, name, value)
-  Miwos.patch:updateProp(moduleId, name, value)
+  Miwos.patch:updatePropValue(moduleId, name, value)
   Miwos:emit('prop:change', moduleId, name, value)
 end)
 

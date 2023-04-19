@@ -1,4 +1,5 @@
 local class = require('class')
+local Utils = require('utils')
 
 ---@class Patch: Class
 ---@field modules table<number, Module>
@@ -39,6 +40,14 @@ function Patch:addModule(id, type, props)
   self.modules[id] = instance
 
   return true
+end
+
+function Patch:getModule(moduleId)
+  local module = self.modules[moduleId]
+  if not module then
+    Log.warn(string.format('module with id `%s` not found', moduleId))
+  end
+  return module
 end
 
 ---@param id number
@@ -100,17 +109,58 @@ function Patch:clear()
   -- TODO: clear PropsView
 end
 
-function Patch:updateProp(moduleId, name, value)
-  local module = self.modules[moduleId]
-  if not module then
-    Log.warn(string.format('module with id `%s` not found', moduleId))
-    return false
+---@param moduleId number
+---@param name string
+---@return table?
+function Patch:getPropModulation(moduleId, name)
+  for _, modulation in pairs(self.modulations) do
+    if modulation[2] == moduleId and modulation[3] == name then
+      return modulation
+    end
   end
+end
+
+---@param moduleId number
+---@param name string
+---@param value any
+function Patch:updatePropValue(moduleId, name, value)
+  local module = self:getModule(moduleId)
+  if not module then return end
+
+  -- If the prop is modulated, the `Patch:updateModulations` method will take
+  -- care of calling prop change events (with the modulated value) on the
+  -- module, so we only have to set the prop value.
+  local propIsModulated = self:getPropModulation(moduleId, name)
+  if propIsModulated then
+    module.__propValues[name] = value
+    return
+  end
+
+  self:__updatePropValue(module, module.__propValues, name, value)
+end
+
+---@param moduleId number
+---@param name string
+---@param value any
+function Patch:updateModulatedPropvalue(moduleId, name, value)
+  local module = self:getModule(moduleId)
+  if not module then return end
+
+  self:__updatePropValue(module, module.__propValuesModulated, name, value)
+end
+
+---@param module Module
+---@param props table<string, any>
+---@param name string
+---@param value any
+function Patch:__updatePropValue(module, props, name, value)
+  local valueHasChanged = props[name] ~= value
+  if not valueHasChanged then return end
 
   module:callEvent('prop:beforeChange', name, value)
   module:callEvent('prop[' .. name .. ']:beforeChange', value)
 
-  module.props[name] = value
+  props[name] = value
 
   module:callEvent('prop:change', name, value)
   module:callEvent('prop[' .. name .. ']:change', value)
@@ -127,13 +177,13 @@ function Patch:updateModulations(time)
     local definition = Miwos.propDefinitions[component.__type]
 
     if modulator then
-      local oldValue = module.props[prop]
+      local baseValue = module.__propValues[prop]
       local modulationValue = modulator:value(time)
       local value =
-        definition.modulateValue(oldValue, modulationValue, 1, options)
-      self:updateProp(moduleId, prop, value)
-      Miwos:emit('prop:change', moduleId, prop, value)
-      Bridge.notify('/e/modules/prop', moduleId, prop, value)
+        definition.modulateValue(baseValue, modulationValue, amount, options)
+      self:updateModulatedPropvalue(moduleId, prop, value)
+      -- TODO: notify bridge
+      -- Bridge.notify('/e/modules/prop', moduleId, prop, value)
     else
       Log.warn(string.format('modulator with id `%s` not found', moduleId))
     end

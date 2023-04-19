@@ -1,5 +1,5 @@
 local class = require('class')
-local Utils = require('Utils')
+local Utils = require('utils')
 
 ---@class Module : Class
 ---@field __type string
@@ -15,7 +15,18 @@ function Module:constructor(props)
   self.__inputs = {}
   self.__outputs = {}
   self.__activeNotes = {}
-  self.props = Utils.getPropsWithDefaults(self.__definition.props, props or {})
+
+  self.__propValues =
+    Utils.getPropsWithDefaults(self.__definition.props, props or {})
+  self.__propValuesModulated = {}
+  self.props = setmetatable({}, {
+    __index = function(_, key)
+      local modulated = self.__propValuesModulated[key]
+      if modulated then return modulated end
+
+      return self.__propValues[key]
+    end,
+  })
 
   Utils.callIfExists(self.setup, self)
 end

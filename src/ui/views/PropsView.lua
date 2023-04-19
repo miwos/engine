@@ -101,7 +101,7 @@ function PropsView:handlePropUpdate(slot, value)
   end
 
   local module, propName = unpack(self.page[slot])
-  self.props.patch:updateProp(module.__id, propName, value)
+  self.props.patch:updatePropValue(module.__id, propName, value)
 
   Bridge.notify('/e/modules/prop', module.__id, propName, value)
 end
