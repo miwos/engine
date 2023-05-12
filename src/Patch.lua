@@ -173,19 +173,21 @@ function Patch:updateModulations(time)
     local modulator = self.modulators[modulatorId]
     local module = self.modules[moduleId]
 
-    local component, options = unpack(module.__definition.props[prop])
-    local definition = Miwos.propDefinitions[component.__type]
+    if module then
+      local component, options = unpack(module.__definition.props[prop])
+      local definition = Miwos.propDefinitions[component.__type]
 
-    if modulator then
-      local baseValue = module.__propValues[prop]
-      local modulationValue = modulator:value(time)
-      local value =
-        definition.modulateValue(baseValue, modulationValue, amount, options)
-      self:updateModulatedPropvalue(moduleId, prop, value)
-      -- TODO: notify bridge
-      -- Bridge.notify('/e/modules/prop', moduleId, prop, value)
-    else
-      Log.warn(string.format('modulator with id `%s` not found', moduleId))
+      if modulator then
+        local baseValue = module.__propValues[prop]
+        local modulationValue = modulator:value(time)
+        local value =
+          definition.modulateValue(baseValue, modulationValue, amount, options)
+        self:updateModulatedPropvalue(moduleId, prop, value)
+        -- TODO: notify bridge
+        -- Bridge.notify('/e/modules/prop', moduleId, prop, value)
+      else
+        Log.warn(string.format('modulator with id `%s` not found', moduleId))
+      end
     end
   end
 end
