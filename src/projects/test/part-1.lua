@@ -44,6 +44,11 @@ return {
       type = 'Lfo',
       props = { shape = 1, rate = 5 },
     },
+    {
+      id = 5,
+      type = 'Lfo',
+      props = { shape = 1, rate = 5 },
+    },
   },
   modulations = {
     { 4, 3, 'time', 1 },
