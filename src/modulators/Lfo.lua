@@ -9,8 +9,11 @@ local Lfo = Miwos.defineModulator('Lfo', {
 
 function Lfo:setup()
   -- self.props
+  -- Log.dump(self.props)
 end
 
 function Lfo:value(time)
-  return math.sin(time / 1000000)
+  local timeSeconds = time / 1000000
+  local angularFrequency = 2 * math.pi * self.props.rate
+  return math.sin(timeSeconds * angularFrequency)
 end

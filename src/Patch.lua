@@ -168,6 +168,13 @@ end
 
 ---@param time number
 function Patch:updateModulations(time)
+  local modulatorValues = {}
+  for id, modulator in pairs(self.modulators) do
+    modulatorValues[#modulatorValues + 1] =
+      Utils.packBytes(id, Utils.mapValue(modulator:value(time), -1, 1, 0, 255))
+  end
+  Bridge.notify('/e/modulators/values', unpack(modulatorValues))
+
   for _, modulation in pairs(self.modulations) do
     local modulatorId, moduleId, prop, amount = unpack(modulation)
     local modulator = self.modulators[modulatorId]

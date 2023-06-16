@@ -42,12 +42,12 @@ return {
     {
       id = 4,
       type = 'Lfo',
-      props = { shape = 1, rate = 5 },
+      props = { shape = 1, rate = 0.1 },
     },
     {
       id = 5,
       type = 'Lfo',
-      props = { shape = 1, rate = 5 },
+      props = { shape = 1, rate = 1 },
     },
   },
   modulations = {

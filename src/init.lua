@@ -105,7 +105,6 @@ Miwos.loadSettings()
 Miwos.loadProject('test')
 Miwos.switchView(PropsView({ patch = Miwos.patch }))
 
--- Midi.start()
--- Utils.packBytes(60, 127)
+Midi.start()
 
 -- Log.info(Utils.getUsedMemory())
